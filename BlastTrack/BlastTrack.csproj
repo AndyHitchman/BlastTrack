@@ -40,6 +40,7 @@
     <Compile Include="Dogs\DogEvent.cs" />
     <Compile Include="Dogs\DogNamed.cs" />
     <Compile Include="Dogs\DogRegistered.cs" />
+    <Compile Include="Dogs\DogRequiresVaccinationWithin12Weeks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

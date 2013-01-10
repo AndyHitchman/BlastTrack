@@ -6,40 +6,6 @@ namespace BlastTrack.Dogs
         Consumes<DogRegistered>,
         Consumes<DogNamed>
     {
-        public class Selector :
-            SelectAggregate<Dog, RegisterDog>,
-            SelectAggregate<Dog, DogRegistered>,
-            SelectAggregate<Dog, DogCommand>,
-            SelectAggregate<Dog, DogEvent>
-        {
-            private readonly AggregateFactory<Dog, string> aggregateFactory;
-
-            public Selector(AggregateFactory<Dog, string> aggregateFactory)
-            {
-                this.aggregateFactory = aggregateFactory;
-            }
-
-            public Dog Select(RegisterDog message)
-            {
-                return new Dog(message);
-            }
-
-            public Dog Select(DogRegistered message)
-            {
-                return new Dog(message);
-            }
-
-            public Dog Select(DogCommand message)
-            {
-                return aggregateFactory.Buildup(message.Earbrand);
-            }
-
-            public Dog Select(DogEvent message)
-            {
-                return aggregateFactory.Buildup(message.Earbrand);
-            }
-        }
-
         private string earbrand;
         private string name;
 
@@ -48,7 +14,7 @@ namespace BlastTrack.Dogs
         {
             //Check no other dog exists with this earbrand
 
-            this.Raise(new DogRegistered(cmd.Earbrand));
+            this.Raise(new DogRegistered(cmd.Earbrand, cmd.VaccinationCertificateNumber));
         }
 
         public Dog(DogRegistered @event)
@@ -66,6 +32,8 @@ namespace BlastTrack.Dogs
         public void Receive(DogRegistered @event)
         {
             earbrand = @event.Earbrand;
+            if(@event.VaccinationCertificateNumber == null)
+                this.Raise(new DogRequiresVaccinationWithin12Weeks(earbrand));
         }
 
         public void Receive(DogNamed @event)

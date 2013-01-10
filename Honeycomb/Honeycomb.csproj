@@ -37,6 +37,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,11 +46,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
-    <Compile Include="AggregateFactory.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Consumes.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventStore.cs" />
+    <Compile Include="Infrastructure\AggregateContext.cs" />
+    <Compile Include="Infrastructure\AggregateFactory.cs" />
+    <Compile Include="Infrastructure\AggregateLifestate.cs" />
+    <Compile Include="Infrastructure\AggregateResourceManager.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Obeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

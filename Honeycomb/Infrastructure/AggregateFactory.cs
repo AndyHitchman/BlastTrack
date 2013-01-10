@@ -1,10 +1,10 @@
-namespace Honeycomb
+namespace Honeycomb.Infrastructure
 {
     using System;
     using System.Linq;
     using ReflectionMagic;
 
-    public class AggregateFactory<TAggregate,TKey>
+    public class AggregateFactory<TAggregate,TKey> where TAggregate : Aggregate
     {
         private readonly EventStore eventStore;
 
@@ -13,7 +13,7 @@ namespace Honeycomb
             this.eventStore = eventStore;
         }
 
-        public TAggregate Buildup(TKey key)
+        public TAggregate Restore(TKey key)
         {
             var aggregateType = typeof (TAggregate);
             var events = eventStore.GetEventsForAggregate(aggregateType, key);
@@ -22,10 +22,13 @@ namespace Honeycomb
             var changeEvents = events.Skip(1);
 
             var aggregate = construct(aggregateType, creationEvent);
+            AggregateContext.RestoreInProgress(aggregate);
 
             foreach (var uniqueEvent in changeEvents)
                 aggregate.AsDynamic().Receive(uniqueEvent.UntypedEvent);
             
+            AggregateContext.BuildComplete(aggregate);
+
             return aggregate;
         }
 
