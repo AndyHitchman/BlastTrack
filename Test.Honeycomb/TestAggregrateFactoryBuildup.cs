@@ -74,7 +74,7 @@ namespace Test.Honeycomb
                         new UniqueEvent(Guid.NewGuid(), new DogNamed(aggregateKey, givenName), raisedTime),
                     });
 
-            AggregateContext.IsLive(actual).ShouldBeTrue();
+            AggregateContext.GetAggregateLifestate(actual).ShouldEqual(AggregateLifestate.Live);
         }
 
         [Test]

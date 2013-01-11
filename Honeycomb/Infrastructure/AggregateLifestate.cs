@@ -2,7 +2,8 @@ namespace Honeycomb.Infrastructure
 {
     public enum AggregateLifestate
     {
-        Restoring = 0,
+        Untracked,
+        Replaying,
         Live,
         Lapsed
     }
