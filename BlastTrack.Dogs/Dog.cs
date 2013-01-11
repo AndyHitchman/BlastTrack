@@ -2,9 +2,7 @@ namespace BlastTrack.Dogs
 {
     using Honeycomb;
 
-    public class Dog : Aggregate, 
-        Consumes<DogRegistered>,
-        Consumes<DogNamed>
+    public class Dog : Aggregate, SelectedWith<DogSelector>
     {
         private string earbrand;
         private string name;
@@ -12,7 +10,7 @@ namespace BlastTrack.Dogs
         
         public Dog(RegisterDog cmd)
         {
-            //Check no other dog exists with this earbrand
+            //TODO Check no other dog exists with this earbrand
 
             this.Raise(new DogRegistered(cmd.Earbrand, cmd.VaccinationCertificateNumber));
         }
@@ -20,6 +18,8 @@ namespace BlastTrack.Dogs
         public Dog(DogRegistered @event)
         {
             earbrand = @event.Earbrand;
+            if (@event.VaccinationCertificateNumber == null)
+                this.Raise(new DogRequiresVaccinationWithin12Weeks(earbrand));
         }
 
         public void Accept(NameDog cmd)
@@ -27,13 +27,6 @@ namespace BlastTrack.Dogs
             if (name != null) throw new RefusedCommandException("The dog is already named");
 
             this.Raise(new DogNamed(earbrand, cmd.GivenName));
-        }
-
-        public void Receive(DogRegistered @event)
-        {
-            earbrand = @event.Earbrand;
-            if(@event.VaccinationCertificateNumber == null)
-                this.Raise(new DogRequiresVaccinationWithin12Weeks(earbrand));
         }
 
         public void Receive(DogNamed @event)

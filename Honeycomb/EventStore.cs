@@ -5,6 +5,6 @@ namespace Honeycomb
 
     public interface EventStore
     {
-        IEnumerable<UniqueEvent> GetEventsForAggregate(Type aggregateIdentity, object key);
+        IEnumerable<UniqueEvent> RecordedEventsForAggregate(Type aggregateIdentity, object key);
     }
 }

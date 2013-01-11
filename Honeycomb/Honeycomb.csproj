@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
+    <Compile Include="AggregateSelectorAttribute.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Consumes.cs" />
     <Compile Include="Event.cs" />
@@ -59,7 +60,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Receipt.cs" />
     <Compile Include="RefusedCommandException.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="SelectAggregate.cs" />
+    <Compile Include="SelectedWith.cs" />
     <Compile Include="UniqueAggregate.cs" />
     <Compile Include="UniqueEvent.cs" />
   </ItemGroup>

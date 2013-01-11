@@ -19,19 +19,17 @@ namespace Test.Honeycomb
         public void it_should_construct_the_aggregate_using_the_first_event()
         {
             var aggregateKey = "test";
-
-            var eventStore = Substitute.For<EventStore>();
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-            eventStore.GetEventsForAggregate(typeof(Dog), aggregateKey)
-                .Returns(new[]
+            var subject = new AggregateFactory();
+
+            var ts = new TransactionScope();
+            var actual = subject.Restore(
+                typeof (Dog),
+                aggregateKey,
+                new[]
                     {
                         new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime)
                     });
-            
-            var subject = new AggregateFactory<Dog, string>(eventStore);
-
-            var ts = new TransactionScope();
-            var actual = subject.Restore(aggregateKey);
 
             actual.ShouldNotBeNull();
             ((string)actual.AsDynamic().earbrand).ShouldEqual(aggregateKey);
@@ -42,20 +40,18 @@ namespace Test.Honeycomb
         {
             var aggregateKey = "test";
             var givenName = "Wolfie";
+            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);            
+            var subject = new AggregateFactory();
 
-            var eventStore = Substitute.For<EventStore>();
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-            eventStore.GetEventsForAggregate(typeof(Dog), aggregateKey)
-                .Returns(new[]
+            var ts = new TransactionScope();
+            var actual = subject.Restore(
+                typeof (Dog),
+                aggregateKey,
+                new[]
                     {
                         new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime),
                         new UniqueEvent(Guid.NewGuid(), new DogNamed(aggregateKey, givenName), raisedTime),
                     });
-            
-            var subject = new AggregateFactory<Dog, string>(eventStore);
-
-            var ts = new TransactionScope();
-            var actual = subject.Restore(aggregateKey);
 
             ((string)actual.AsDynamic().name).ShouldEqual(givenName);
         }
@@ -65,20 +61,18 @@ namespace Test.Honeycomb
         {
             var aggregateKey = "test";
             var givenName = "Wolfie";
+            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);          
+            var subject = new AggregateFactory();
 
-            var eventStore = Substitute.For<EventStore>();
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-            eventStore.GetEventsForAggregate(typeof(Dog), aggregateKey)
-                .Returns(new[]
+            var ts = new TransactionScope();
+            var actual = subject.Restore(
+                typeof (Dog),
+                aggregateKey,
+                new[]
                     {
                         new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime),
                         new UniqueEvent(Guid.NewGuid(), new DogNamed(aggregateKey, givenName), raisedTime),
                     });
-            
-            var subject = new AggregateFactory<Dog, string>(eventStore);
-
-            var ts = new TransactionScope();
-            var actual = subject.Restore(aggregateKey);
 
             AggregateContext.IsLive(actual).ShouldBeTrue();
         }
@@ -87,19 +81,17 @@ namespace Test.Honeycomb
         public void events_raised_whilst_restoring_do_not_propogate()
         {
             var aggregateKey = "test";
-
-            var eventStore = Substitute.For<EventStore>();
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-            eventStore.GetEventsForAggregate(typeof(Dog), aggregateKey)
-                .Returns(new[]
+            var subject = new AggregateFactory();
+
+            var ts = new TransactionScope();
+            var actual = subject.Restore(
+                typeof (Dog),
+                aggregateKey,
+                new[]
                     {
                         new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime)
                     });
-
-            var subject = new AggregateFactory<Dog, string>(eventStore);
-
-            var ts = new TransactionScope();
-            var actual = subject.Restore(aggregateKey);
 
             var tarms =
                 (Dictionary<Aggregate, AggregateResourceManager>)

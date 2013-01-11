@@ -1,6 +1,5 @@
 namespace Honeycomb
 {
-    using System.Transactions;
     using Infrastructure;
 
     public interface Aggregate

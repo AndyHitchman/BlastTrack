@@ -1,7 +1,6 @@
 namespace BlastTrack.Dogs
 {
     using Honeycomb;
-    using Honeycomb.Infrastructure;
 
     public class DogSelector :
         SelectAggregate<Dog, RegisterDog>,
@@ -9,11 +8,8 @@ namespace BlastTrack.Dogs
         SelectAggregate<Dog, DogCommand>,
         SelectAggregate<Dog, DogEvent>
     {
-        private readonly AggregateFactory<Dog, string> aggregateFactory;
-
-        public DogSelector(AggregateFactory<Dog, string> aggregateFactory)
+        public DogSelector()
         {
-            this.aggregateFactory = aggregateFactory;
         }
 
         public Dog Select(RegisterDog message)
@@ -28,12 +24,12 @@ namespace BlastTrack.Dogs
 
         public Dog Select(DogCommand message)
         {
-            return aggregateFactory.Restore(message.Earbrand);
+            return Repository.Select<Dog>(message.Earbrand);
         }
 
         public Dog Select(DogEvent message)
         {
-            return aggregateFactory.Restore(message.Earbrand);
+            return Repository.Select<Dog>(message.Earbrand);
         }
     }
 }
