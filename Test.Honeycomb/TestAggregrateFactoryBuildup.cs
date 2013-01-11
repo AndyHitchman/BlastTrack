@@ -20,10 +20,9 @@ namespace Test.Honeycomb
         {
             var aggregateKey = "test";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-            var subject = new AggregateFactory();
 
             var ts = new TransactionScope();
-            var actual = subject.Restore(
+            var actual = AggregateFactory.Restore(
                 typeof (Dog),
                 aggregateKey,
                 new[]
@@ -41,10 +40,9 @@ namespace Test.Honeycomb
             var aggregateKey = "test";
             var givenName = "Wolfie";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);            
-            var subject = new AggregateFactory();
 
             var ts = new TransactionScope();
-            var actual = subject.Restore(
+            var actual = AggregateFactory.Restore(
                 typeof (Dog),
                 aggregateKey,
                 new[]
@@ -62,10 +60,9 @@ namespace Test.Honeycomb
             var aggregateKey = "test";
             var givenName = "Wolfie";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);          
-            var subject = new AggregateFactory();
 
             var ts = new TransactionScope();
-            var actual = subject.Restore(
+            var actual = AggregateFactory.Restore(
                 typeof (Dog),
                 aggregateKey,
                 new[]
@@ -82,10 +79,9 @@ namespace Test.Honeycomb
         {
             var aggregateKey = "test";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-            var subject = new AggregateFactory();
 
             var ts = new TransactionScope();
-            var actual = subject.Restore(
+            var actual = AggregateFactory.Restore(
                 typeof (Dog),
                 aggregateKey,
                 new[]
@@ -93,11 +89,9 @@ namespace Test.Honeycomb
                         new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime)
                     });
 
-            var tarms =
-                (Dictionary<Aggregate, AggregateResourceManager>)
-                typeof (AggregateContext).GetField("trackedAggregateResourceManager", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-
-            ((List<Event>)tarms[actual].AsDynamic().changes).ShouldBeEmpty();
+            var resourceManager = AggregateContext.AggregateTracker[actual].ResourceManager;
+                
+            ((List<Event>)resourceManager.AsDynamic().changes).ShouldBeEmpty();
         }
     }
 }

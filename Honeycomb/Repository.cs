@@ -14,13 +14,9 @@
 
         public static TAggregate Select<TAggregate>(object key) where TAggregate : Aggregate
         {
-            var aggregateFactory = new AggregateFactory();
             var aggregateType = typeof (TAggregate);
-
-            AggregateContext.RestoreRequired(aggregateType, key);
-
             var replayEvents = eventStore.RecordedEventsForAggregate(aggregateType, key);
-            return (TAggregate)aggregateFactory.Restore(aggregateType, key, replayEvents);
+            return (TAggregate)AggregateFactory.Restore(aggregateType, key, replayEvents);
         }
     }
 }

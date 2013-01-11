@@ -6,9 +6,9 @@ namespace Honeycomb.Infrastructure
     using System.Runtime.Serialization;
     using ReflectionMagic;
 
-    public class AggregateFactory
+    public static class AggregateFactory
     {
-        public Aggregate Restore(Type aggregateType, object key, IEnumerable<UniqueEvent> replayEvents)
+        public static Aggregate Restore(Type aggregateType, object key, IEnumerable<UniqueEvent> replayEvents)
         {
             var events = replayEvents;
             
@@ -16,13 +16,13 @@ namespace Honeycomb.Infrastructure
             var changeEvents = events.Skip(1);
 
             var aggregate = blank(aggregateType);
-
-            AggregateContext.RestoreInProgress(key, aggregate);
             
+            AggregateContext.AggregateIsReplaying(aggregate, key);
+
             construct(aggregateType, creationEvent, aggregate);
             replay(changeEvents, aggregate);
             
-            AggregateContext.BuildComplete(aggregate);
+            AggregateContext.AggregateIsLive(aggregate, key);
 
             return aggregate;
         }

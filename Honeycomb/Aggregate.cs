@@ -10,7 +10,7 @@ namespace Honeycomb
     {
         public static void Raise(this Aggregate aggregate, Event @event)
         {
-            AggregateContext.RecordChange(aggregate, @event);
+            AggregateContext.Raise(@event);
         }
     }
 }

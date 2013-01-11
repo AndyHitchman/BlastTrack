@@ -53,8 +53,11 @@
     <Compile Include="EventStore.cs" />
     <Compile Include="Infrastructure\AggregateContext.cs" />
     <Compile Include="Infrastructure\AggregateFactory.cs" />
+    <Compile Include="Infrastructure\AggregateInfo.cs" />
     <Compile Include="Infrastructure\AggregateLifestate.cs" />
     <Compile Include="Infrastructure\AggregateResourceManager.cs" />
+    <Compile Include="Infrastructure\SelectorMap.cs" />
+    <Compile Include="Infrastructure\AggregateTracker.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Obeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,7 +66,6 @@
     <Compile Include="Repository.cs" />
     <Compile Include="SelectAggregate.cs" />
     <Compile Include="SelectedWith.cs" />
-    <Compile Include="UniqueAggregate.cs" />
     <Compile Include="UniqueEvent.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -26,11 +26,8 @@ namespace Test.Honeycomb
 
             var dog = new Dog(new RegisterDog("test", null, null));
 
-            var tarms =
-                (Dictionary<Aggregate, AggregateResourceManager>)
-                typeof (AggregateContext).GetField("trackedAggregateResourceManager", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-
-            var actual = ((List<Event>) tarms[dog].AsDynamic().changes);
+            var resourceManager = AggregateContext.AggregateTracker[dog].ResourceManager;
+            var actual = (List<Event>) resourceManager.AsDynamic().changes;
             actual.Count().ShouldEqual(1);
             actual.First().ShouldBeType<DogRegistered>();
         }
@@ -45,11 +42,8 @@ namespace Test.Honeycomb
 
             var dog = new Dog(new DogRegistered("test", null));
 
-            var tarms =
-                (Dictionary<Aggregate, AggregateResourceManager>)
-                typeof (AggregateContext).GetField("trackedAggregateResourceManager", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-
-            var actual = ((List<Event>) tarms[dog].AsDynamic().changes);
+            var resourceManager = AggregateContext.AggregateTracker[dog].ResourceManager;
+            var actual = (List<Event>) resourceManager.AsDynamic().changes;
             actual.Count().ShouldEqual(1);
             actual.First().ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
         }
