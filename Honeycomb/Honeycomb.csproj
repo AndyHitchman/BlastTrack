@@ -51,7 +51,6 @@
     <Compile Include="Consumes.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventStore.cs" />
-    <Compile Include="Infrastructure\AggregateContext.cs" />
     <Compile Include="Infrastructure\AggregateFactory.cs" />
     <Compile Include="Infrastructure\AggregateInfo.cs" />
     <Compile Include="Infrastructure\AggregateLifestate.cs" />
@@ -59,12 +58,10 @@
     <Compile Include="Infrastructure\SelectorMap.cs" />
     <Compile Include="Infrastructure\AggregateTracker.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Obeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Receipt.cs" />
     <Compile Include="RefusedCommandException.cs" />
-    <Compile Include="Repository.cs" />
-    <Compile Include="SelectAggregate.cs" />
+    <Compile Include="Domain.cs" />
+    <Compile Include="SelectKeyForAggregate.cs" />
     <Compile Include="SelectedWith.cs" />
     <Compile Include="UniqueEvent.cs" />
   </ItemGroup>

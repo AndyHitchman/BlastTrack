@@ -33,5 +33,8 @@ namespace BlastTrack.Dogs
         {
             name = @event.GivenName;
         }
+
+        public void Receive(DogRequiresVaccinationWithin12Weeks @event)
+        {}
     }
 }

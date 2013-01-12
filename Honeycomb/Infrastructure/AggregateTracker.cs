@@ -7,13 +7,19 @@ namespace Honeycomb.Infrastructure
 
     public class AggregateTracker
     {
-        private readonly Dictionary<Aggregate, AggregateInfo> trackedAggregate = new Dictionary<Aggregate, AggregateInfo>();
+        private readonly Dictionary<Tuple<Type, object>, AggregateInfo> trackedAggregate = new Dictionary<Tuple<Type, object>, AggregateInfo>();
 
         public AggregateInfo this[Type aggregateType, object key]
         {
             get
             {
-                return trackedAggregate.Values.SingleOrDefault(_ => _.Type == aggregateType && _.Key == key);
+                var id = new Tuple<Type, object>(aggregateType, key);
+
+                if (!trackedAggregate.ContainsKey(id))
+                    trackedAggregate[id] =
+                        new AggregateInfo(aggregateType, key, new AggregateResourceManager(Transaction.Current));
+
+                return trackedAggregate[id];
             }
         }
 
@@ -21,11 +27,7 @@ namespace Honeycomb.Infrastructure
         {
             get
             {
-                if (!trackedAggregate.ContainsKey(aggregate))
-                    trackedAggregate[aggregate] =
-                        new AggregateInfo(aggregate.GetType(), new AggregateResourceManager(Transaction.Current));
-
-                return trackedAggregate[aggregate];
+                return trackedAggregate.Values.SingleOrDefault(_ => _.Instance == aggregate);
             }
         }
     }

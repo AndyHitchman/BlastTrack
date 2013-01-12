@@ -18,78 +18,87 @@ namespace Test.Honeycomb
         [Test]
         public void it_should_construct_the_aggregate_using_the_first_event()
         {
+            var domain = new Domain(null);
+            
             var aggregateKey = "test";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             var ts = new TransactionScope();
-            var actual = AggregateFactory.Restore(
-                typeof (Dog),
-                aggregateKey,
-                new[]
+
+            var ai = domain.Tracked[typeof (Dog), aggregateKey];
+            AggregateFactory.Buildup(
+                ai,
+                new Event[]
                     {
-                        new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime)
+                        new DogRegistered(aggregateKey, null)
                     });
 
-            actual.ShouldNotBeNull();
-            ((string)actual.AsDynamic().earbrand).ShouldEqual(aggregateKey);
+            ai.Instance.ShouldNotBeNull();
+            ((string)ai.Instance.AsDynamic().earbrand).ShouldEqual(aggregateKey);
         }
 
         [Test]
         public void it_should_buildup_the_aggregate_using_the_recorded_events()
         {
+            var domain = new Domain(null);
+
             var aggregateKey = "test";
             var givenName = "Wolfie";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);            
 
             var ts = new TransactionScope();
-            var actual = AggregateFactory.Restore(
-                typeof (Dog),
-                aggregateKey,
-                new[]
+            var ai = domain.Tracked[typeof(Dog), aggregateKey];
+            AggregateFactory.Buildup(
+                ai,
+                new Event[]
                     {
-                        new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime),
-                        new UniqueEvent(Guid.NewGuid(), new DogNamed(aggregateKey, givenName), raisedTime),
+                        new DogRegistered(aggregateKey, null),
+                        new DogNamed(aggregateKey, givenName)
                     });
 
-            ((string)actual.AsDynamic().name).ShouldEqual(givenName);
+            ((string)ai.Instance.AsDynamic().name).ShouldEqual(givenName);
         }
 
         [Test]
         public void the_aggregate_content_should_report_live_for_the_instance_after_restore()
         {
+            var domain = new Domain(null);
+
             var aggregateKey = "test";
             var givenName = "Wolfie";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);          
 
             var ts = new TransactionScope();
-            var actual = AggregateFactory.Restore(
-                typeof (Dog),
-                aggregateKey,
-                new[]
+            var ai = domain.Tracked[typeof(Dog), aggregateKey];
+            AggregateFactory.Buildup(
+                ai,
+                new Event[]
                     {
-                        new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime),
-                        new UniqueEvent(Guid.NewGuid(), new DogNamed(aggregateKey, givenName), raisedTime),
+                        new DogRegistered(aggregateKey, null),
+                        new DogNamed(aggregateKey, givenName)
                     });
 
-            AggregateContext.GetAggregateLifestate(actual).ShouldEqual(AggregateLifestate.Live);
+            ai.Lifestate.ShouldEqual(AggregateLifestate.Live);
         }
 
         [Test]
         public void events_raised_whilst_restoring_do_not_propogate()
         {
+            var domain = new Domain(null);
+
             var aggregateKey = "test";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             var ts = new TransactionScope();
-            var actual = AggregateFactory.Restore(
-                typeof (Dog),
-                aggregateKey,
-                new[]
+            var ai = domain.Tracked[typeof(Dog), aggregateKey];
+            AggregateFactory.Buildup(
+                ai,
+                new Event[]
                     {
-                        new UniqueEvent(Guid.NewGuid(), new DogRegistered(aggregateKey, null), raisedTime)
+                        new DogRegistered(aggregateKey, null)
                     });
 
-            var resourceManager = AggregateContext.AggregateTracker[actual].ResourceManager;
+            var resourceManager = ai.ResourceManager;
                 
             ((List<Event>)resourceManager.AsDynamic().changes).ShouldBeEmpty();
         }

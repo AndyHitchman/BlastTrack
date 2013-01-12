@@ -8,23 +8,39 @@ namespace Honeycomb.Infrastructure
 
     public static class AggregateFactory
     {
-        public static Aggregate Restore(Type aggregateType, object key, IEnumerable<UniqueEvent> replayEvents)
+        public static void Buildup(AggregateInfo aggregateInfo, IEnumerable<Event> replayEvents)
         {
-            var events = replayEvents;
-            
-            var creationEvent = events.First();
-            var changeEvents = events.Skip(1);
+            var creationEvent = replayEvents.First();
+            var changeEvents = replayEvents.Skip(1);
 
-            var aggregate = blank(aggregateType);
-            
-            AggregateContext.AggregateIsReplaying(aggregate, key);
+            var aggregate = blank(aggregateInfo.Type);
 
-            construct(aggregateType, creationEvent, aggregate);
+            aggregateInfo.Instance = aggregate;
+            aggregateInfo.Lifestate = AggregateLifestate.Building;
+
+            construct(aggregateInfo, creationEvent);
             replay(changeEvents, aggregate);
-            
-            AggregateContext.AggregateIsLive(aggregate, key);
 
-            return aggregate;
+            aggregateInfo.Lifestate = AggregateLifestate.Live;
+        }
+
+        public static void Create(AggregateInfo aggregateInfo, Event @event)
+        {
+            var aggregate = blank(aggregateInfo.Type);
+
+            aggregateInfo.Instance = aggregate;
+            aggregateInfo.Lifestate = AggregateLifestate.Live;
+
+            construct(aggregateInfo, @event);
+        }
+
+        public static void Create(AggregateInfo aggregateInfo, Command command)
+        {
+            var aggregate = blank(aggregateInfo.Type);
+
+            aggregateInfo.Instance = aggregate;
+
+            construct(aggregateInfo, command);
         }
 
         private static Aggregate blank(Type aggregateType)
@@ -32,16 +48,16 @@ namespace Honeycomb.Infrastructure
             return (Aggregate) FormatterServices.GetUninitializedObject(aggregateType);
         }
 
-        private static void construct(Type aggregateType, UniqueEvent creationEvent, Aggregate aggregate)
+        private static void construct(AggregateInfo aggregateInfo, Message creationMessage)
         {
-            var creationConstructor = aggregateType.GetConstructor(new[] {creationEvent.EventType});
-            creationConstructor.Invoke(aggregate, new object[] {creationEvent.UntypedEvent});
+            var creationConstructor = aggregateInfo.Type.GetConstructor(new[] {creationMessage.GetType()});
+            creationConstructor.Invoke(aggregateInfo.Instance, new object[] {creationMessage});
         }
 
-        private static void replay(IEnumerable<UniqueEvent> changeEvents, Aggregate aggregate)
+        private static void replay(IEnumerable<Event> changeEvents, Aggregate aggregate)
         {
-            foreach (var uniqueEvent in changeEvents)
-                aggregate.AsDynamic().Receive(uniqueEvent.UntypedEvent);
+            foreach (var @event in changeEvents)
+                aggregate.AsDynamic().Receive(@event);
         }
     }
 }

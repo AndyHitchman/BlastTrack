@@ -3,33 +3,17 @@ namespace BlastTrack.Dogs
     using Honeycomb;
 
     public class DogSelector :
-        SelectAggregate<Dog, RegisterDog>,
-        SelectAggregate<Dog, DogRegistered>,
-        SelectAggregate<Dog, DogCommand>,
-        SelectAggregate<Dog, DogEvent>
+        SelectKeyForAggregate<Dog, DogCommand>,
+        SelectKeyForAggregate<Dog, DogEvent>
     {
-        public DogSelector()
+        public object SelectKey(DogCommand message)
         {
+            return message.Earbrand;
         }
 
-        public Dog Select(RegisterDog message)
+        public object SelectKey(DogEvent message)
         {
-            return new Dog(message);
-        }
-
-        public Dog Select(DogRegistered message)
-        {
-            return new Dog(message);
-        }
-
-        public Dog Select(DogCommand message)
-        {
-            return Repository.Select<Dog>(message.Earbrand);
-        }
-
-        public Dog Select(DogEvent message)
-        {
-            return Repository.Select<Dog>(message.Earbrand);
+            return message.Earbrand;
         }
     }
 }

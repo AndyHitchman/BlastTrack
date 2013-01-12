@@ -1,6 +1,6 @@
 namespace Honeycomb
 {
-    public interface SelectedWith<TSelector> where TSelector : SelectAggregate
+    public interface SelectedWith<TSelector> where TSelector : SelectKeyForAggregate
     {
     }
 }

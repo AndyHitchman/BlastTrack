@@ -5,11 +5,11 @@
     [AttributeUsage(AttributeTargets.Class)]
     public class AggregateSelectorAttribute : Attribute
     {
-        public SelectAggregate AggregrateSelector { get; private set; }
+        public SelectKeyForAggregate AggregrateSelector { get; private set; }
 
         public AggregateSelectorAttribute(Type aggregrateSelector)
         {
-            AggregrateSelector = Activator.CreateInstance(aggregrateSelector) as SelectAggregate;
+            AggregrateSelector = Activator.CreateInstance(aggregrateSelector) as SelectKeyForAggregate;
         }
     }
 }

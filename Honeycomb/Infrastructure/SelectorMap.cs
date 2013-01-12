@@ -7,10 +7,23 @@ namespace Honeycomb.Infrastructure
 
     public class SelectorMap
     {
-        private readonly Dictionary<Type, SelectAggregate[]> selectorsForMessage = new Dictionary<Type, SelectAggregate[]>();
+        public class SelectorInfo
+        {
+            public SelectorInfo(Type aggregateType, SelectKeyForAggregate selector)
+            {
+                AggregateType = aggregateType;
+                Selector = selector;
+            }
+
+            public Type AggregateType { get; private set; }
+            public SelectKeyForAggregate Selector { get; private set; }
+        }
+
+        private readonly Dictionary<Type, SelectorInfo[]> selectorsForMessage =
+            new Dictionary<Type, SelectorInfo[]>();
         private readonly Dictionary<Assembly, Type[]> selectorsForAssembly = new Dictionary<Assembly, Type[]>(); 
 
-        public SelectAggregate[] this[Message message]
+        public SelectorInfo[] this[Message message]
         {
             get
             {
@@ -21,7 +34,7 @@ namespace Honeycomb.Infrastructure
                         assembly
                             .GetTypes()
                             .Where(type => type.IsClass)
-                            .Where(possibleSelector => typeof (SelectAggregate).IsAssignableFrom(possibleSelector))
+                            .Where(possibleSelector => typeof (SelectKeyForAggregate).IsAssignableFrom(possibleSelector))
                             .ToArray();
 
                 if (!selectorsForMessage.ContainsKey(messageType))
@@ -29,14 +42,24 @@ namespace Honeycomb.Infrastructure
                     selectorsForMessage[messageType] =
                         selectorsForAssembly
                             .SelectMany(_ => _.Value)
-                            .Where(
-                                possibleSelectorForMessage =>
-                                possibleSelectorForMessage
-                                    .GetInterfaces()
-                                    .Where(iface => typeof (SelectAggregate).IsAssignableFrom(iface))
-                                    .Where(selector => selector != typeof(SelectAggregate))
-                                    .Any(selector => messageType.IsAssignableFrom(selector.GetGenericArguments()[1])))
-                            .Select(selectorType => (SelectAggregate)Activator.CreateInstance(selectorType))
+                            .Select(
+                                possibleSelectorType =>
+                                new
+                                    {
+                                        PossibleSelectorType = possibleSelectorType,
+                                        Selectors = possibleSelectorType
+                                                        .GetInterfaces()
+                                                        .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
+                                                        .Where(selector => selector != typeof (SelectKeyForAggregate))
+                                                        .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
+                                    })
+                            .Where(possibleSelectors => possibleSelectors.Selectors.Any())
+                            .SelectMany(
+                                possibleSelectors => possibleSelectors.Selectors, 
+                                (possibleSelectors, selector) => 
+                                    new SelectorInfo(
+                                        selector.GetGenericArguments()[0],
+                                        (SelectKeyForAggregate) Activator.CreateInstance(possibleSelectors.PossibleSelectorType)))
                             .ToArray();
 
                 }
