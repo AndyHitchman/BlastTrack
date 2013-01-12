@@ -62,7 +62,6 @@
     <Compile Include="RefusedCommandException.cs" />
     <Compile Include="Domain.cs" />
     <Compile Include="SelectKeyForAggregate.cs" />
-    <Compile Include="SelectedWith.cs" />
     <Compile Include="UniqueEvent.cs" />
   </ItemGroup>
   <ItemGroup>

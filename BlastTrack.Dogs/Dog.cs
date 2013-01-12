@@ -2,7 +2,7 @@ namespace BlastTrack.Dogs
 {
     using Honeycomb;
 
-    public class Dog : Aggregate, SelectedWith<DogSelector>
+    public class Dog : Aggregate
     {
         private string earbrand;
         private string name;
