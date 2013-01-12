@@ -4,10 +4,10 @@ namespace BlastTrack.Dogs
 
     public class Dog : Aggregate
     {
-        private string earbrand;
+        private readonly string earbrand;
         private string name;
 
-        
+
         public Dog(RegisterDog cmd)
         {
             //TODO Check no other dog exists with this earbrand
@@ -35,6 +35,7 @@ namespace BlastTrack.Dogs
         }
 
         public void Receive(DogRequiresVaccinationWithin12Weeks @event)
-        {}
+        {
+        }
     }
 }

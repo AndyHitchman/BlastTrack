@@ -5,18 +5,15 @@ namespace Honeycomb.Infrastructure
 
     public class AggregateResourceManager : ISinglePhaseNotification
     {
+        private readonly List<Event> changes;
+
         public AggregateResourceManager(Transaction transaction)
         {
             transaction.EnlistVolatile(this, EnlistmentOptions.None);
             changes = new List<Event>();
         }
 
-        private readonly List<Event> changes; 
-
-        public void RecordChange(Event @event)
-        {
-            changes.Add(@event);
-        }
+        #region ISinglePhaseNotification Members
 
         public void Prepare(PreparingEnlistment preparingEnlistment)
         {
@@ -49,9 +46,15 @@ namespace Honeycomb.Infrastructure
             singlePhaseEnlistment.Committed();
         }
 
+        #endregion
+
+        public void RecordChange(Event @event)
+        {
+            changes.Add(@event);
+        }
+
         private void emitAllRecordedChanges()
         {
-            
         }
     }
 }

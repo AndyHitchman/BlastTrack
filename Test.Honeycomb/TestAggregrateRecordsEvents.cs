@@ -9,6 +9,7 @@ namespace Test.Honeycomb
     using ReflectionMagic;
     using Should;
     using global::Honeycomb;
+    using global::Honeycomb.Infrastructure;
 
     [TestFixture]
     public class TestAggregrateRecordsEvents
@@ -20,12 +21,12 @@ namespace Test.Honeycomb
             var domain = new Domain(eventStore);
             var ts = new TransactionScope();
 
-            var key = "test";
-            
+            string key = "test";
+
             domain.Apply(new RegisterDog(key, null, null));
 
-            var aggregateInfo = domain.Tracked[typeof (Dog), key];
-            ((string)aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
+            AggregateInfo aggregateInfo = domain.Tracked[typeof (Dog), key];
+            ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
 
             var recorded = (List<Event>) aggregateInfo.ResourceManager.AsDynamic().changes;
             recorded.Count().ShouldEqual(2);

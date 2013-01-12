@@ -1,15 +1,18 @@
-﻿using System;
-using System.Linq;
-using ReflectionMagic;
-
-namespace Honeycomb
+﻿namespace Honeycomb
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Infrastructure;
+    using ReflectionMagic;
 
     public class Domain
     {
         public static Domain Current;
+
+        public readonly AggregateTracker Tracked = new AggregateTracker();
+        private readonly EventStore eventStore;
+        private readonly SelectorMap selectors = new SelectorMap();
 
         public Domain(EventStore eventStore)
         {
@@ -17,21 +20,16 @@ namespace Honeycomb
             this.eventStore = eventStore;
         }
 
-        private EventStore eventStore;
-
-        public readonly AggregateTracker Tracked = new AggregateTracker();
-        private readonly SelectorMap selectors = new SelectorMap();
-
         public void Apply(Command command)
         {
-            foreach (var aggregateInfo in applyTo(command))
+            foreach (AggregateInfo aggregateInfo in applyTo(command))
             {
                 //If it's not tracked, then select it from the domain.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     selectAggregate(aggregateInfo);
-                
+
                 //If we haven't found it in the domain, then create it, otherwise apply the command.
-                if(aggregateInfo.Lifestate == AggregateLifestate.Untracked)
+                if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     AggregateFactory.Create(aggregateInfo, command);
                 else
                     aggregateInfo.Instance.AsDynamic().Apply(command);
@@ -40,7 +38,7 @@ namespace Honeycomb
 
         public void Raise(Event @event)
         {
-            foreach (var aggregateInfo in applyTo(@event))
+            foreach (AggregateInfo aggregateInfo in applyTo(@event))
             {
                 //If it's not tracked, then select it from the domain.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
@@ -50,31 +48,38 @@ namespace Honeycomb
                 aggregateInfo.ResourceManager.RecordChange(@event);
 
                 //If we haven't found it in the domain, then create it, otherwise consume the event.
-                if(aggregateInfo.Lifestate == AggregateLifestate.Untracked)
+                if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     AggregateFactory.Create(aggregateInfo, @event);
                 else
-                    aggregateInfo.Instance.AsDynamic().Receive(@event);
+                    try
+                    {
+                        aggregateInfo.Instance.AsDynamic().Receive(@event);
+                    }
+                    catch (ApplicationException e)
+                    {
+                        if(e.Source == "ReflectionMagic")
+                            throw new MissingMethodException(aggregateInfo.Type.FullName, "Receive(" + @event.GetType() + ")");
 
-
+                        throw;
+                    }
             }
         }
 
         private void selectAggregate(AggregateInfo aggregateInfo)
         {
-            var replayEvents = eventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
-            if (replayEvents.Any()) 
+            IEnumerable<Event> replayEvents = eventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
+            if (replayEvents.Any())
                 AggregateFactory.Buildup(aggregateInfo, replayEvents);
-            
         }
 
         private IEnumerable<AggregateInfo> applyTo(Message message)
         {
-            foreach (var selectorInfo in selectors[message])
+            foreach (SelectorMap.SelectorInfo selectorInfo in selectors[message])
             {
-                var key = (object)selectorInfo.Selector.AsDynamic().SelectKey(message);
-                var aggregateInfo = Tracked[selectorInfo.AggregateType, key];
+                var key = (object) selectorInfo.Selector.AsDynamic().SelectKey(message);
+                AggregateInfo aggregateInfo = Tracked[selectorInfo.AggregateType, key];
 
-                if(aggregateInfo.Lifestate == AggregateLifestate.Building) continue;
+                if (aggregateInfo.Lifestate == AggregateLifestate.Building) continue;
 
                 yield return aggregateInfo;
             }

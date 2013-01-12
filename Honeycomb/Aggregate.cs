@@ -1,7 +1,5 @@
 namespace Honeycomb
 {
-    using Infrastructure;
-
     public interface Aggregate
     {
     }

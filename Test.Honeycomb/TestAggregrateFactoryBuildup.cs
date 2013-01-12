@@ -2,10 +2,8 @@ namespace Test.Honeycomb
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Transactions;
     using BlastTrack.Dogs;
-    using NSubstitute;
     using NUnit.Framework;
     using ReflectionMagic;
     using Should;
@@ -16,16 +14,15 @@ namespace Test.Honeycomb
     public class TestAggregrateFactoryBuildup
     {
         [Test]
-        public void it_should_construct_the_aggregate_using_the_first_event()
+        public void events_raised_whilst_restoring_do_not_propogate()
         {
             var domain = new Domain(null);
-            
-            var aggregateKey = "test";
+
+            string aggregateKey = "test";
             var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             var ts = new TransactionScope();
-
-            var ai = domain.Tracked[typeof (Dog), aggregateKey];
+            AggregateInfo ai = domain.Tracked[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]
@@ -33,8 +30,9 @@ namespace Test.Honeycomb
                         new DogRegistered(aggregateKey, null)
                     });
 
-            ai.Instance.ShouldNotBeNull();
-            ((string)ai.Instance.AsDynamic().earbrand).ShouldEqual(aggregateKey);
+            AggregateResourceManager resourceManager = ai.ResourceManager;
+
+            ((List<Event>) resourceManager.AsDynamic().changes).ShouldBeEmpty();
         }
 
         [Test]
@@ -42,12 +40,12 @@ namespace Test.Honeycomb
         {
             var domain = new Domain(null);
 
-            var aggregateKey = "test";
-            var givenName = "Wolfie";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);            
+            string aggregateKey = "test";
+            string givenName = "Wolfie";
+            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             var ts = new TransactionScope();
-            var ai = domain.Tracked[typeof(Dog), aggregateKey];
+            AggregateInfo ai = domain.Tracked[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]
@@ -56,7 +54,29 @@ namespace Test.Honeycomb
                         new DogNamed(aggregateKey, givenName)
                     });
 
-            ((string)ai.Instance.AsDynamic().name).ShouldEqual(givenName);
+            ((string) ai.Instance.AsDynamic().name).ShouldEqual(givenName);
+        }
+
+        [Test]
+        public void it_should_construct_the_aggregate_using_the_first_event()
+        {
+            var domain = new Domain(null);
+
+            string aggregateKey = "test";
+            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
+
+            var ts = new TransactionScope();
+
+            AggregateInfo ai = domain.Tracked[typeof (Dog), aggregateKey];
+            AggregateFactory.Buildup(
+                ai,
+                new Event[]
+                    {
+                        new DogRegistered(aggregateKey, null)
+                    });
+
+            ai.Instance.ShouldNotBeNull();
+            ((string) ai.Instance.AsDynamic().earbrand).ShouldEqual(aggregateKey);
         }
 
         [Test]
@@ -64,12 +84,12 @@ namespace Test.Honeycomb
         {
             var domain = new Domain(null);
 
-            var aggregateKey = "test";
-            var givenName = "Wolfie";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);          
+            string aggregateKey = "test";
+            string givenName = "Wolfie";
+            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             var ts = new TransactionScope();
-            var ai = domain.Tracked[typeof(Dog), aggregateKey];
+            AggregateInfo ai = domain.Tracked[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]
@@ -79,28 +99,6 @@ namespace Test.Honeycomb
                     });
 
             ai.Lifestate.ShouldEqual(AggregateLifestate.Live);
-        }
-
-        [Test]
-        public void events_raised_whilst_restoring_do_not_propogate()
-        {
-            var domain = new Domain(null);
-
-            var aggregateKey = "test";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-
-            var ts = new TransactionScope();
-            var ai = domain.Tracked[typeof(Dog), aggregateKey];
-            AggregateFactory.Buildup(
-                ai,
-                new Event[]
-                    {
-                        new DogRegistered(aggregateKey, null)
-                    });
-
-            var resourceManager = ai.ResourceManager;
-                
-            ((List<Event>)resourceManager.AsDynamic().changes).ShouldBeEmpty();
         }
     }
 }

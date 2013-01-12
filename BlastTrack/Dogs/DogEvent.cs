@@ -1,6 +1,5 @@
 namespace BlastTrack.Dogs
 {
-    using System;
     using Honeycomb;
 
     public class DogEvent : Event

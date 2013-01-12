@@ -6,7 +6,6 @@ namespace Honeycomb
     public class RefusedCommandException : Exception
     {
         //TODO: Should probably be a more complex structure linking to the command property (and therefore the form input) if possible.
-        public List<string> Reasons { get; private set; }
 
         public RefusedCommandException()
         {
@@ -17,5 +16,7 @@ namespace Honeycomb
         {
             Reasons.Add(reason);
         }
+
+        public List<string> Reasons { get; private set; }
     }
 }

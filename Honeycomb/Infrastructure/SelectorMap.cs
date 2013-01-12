@@ -7,29 +7,21 @@ namespace Honeycomb.Infrastructure
 
     public class SelectorMap
     {
-        public class SelectorInfo
-        {
-            public SelectorInfo(Type aggregateType, SelectKeyForAggregate selector)
-            {
-                AggregateType = aggregateType;
-                Selector = selector;
-            }
-
-            public Type AggregateType { get; private set; }
-            public SelectKeyForAggregate Selector { get; private set; }
-        }
+        private readonly Dictionary<Assembly, Type[]> selectorsForAssembly = new Dictionary<Assembly, Type[]>();
 
         private readonly Dictionary<Type, SelectorInfo[]> selectorsForMessage =
             new Dictionary<Type, SelectorInfo[]>();
-        private readonly Dictionary<Assembly, Type[]> selectorsForAssembly = new Dictionary<Assembly, Type[]>(); 
 
         public SelectorInfo[] this[Message message]
         {
             get
             {
-                var messageType = message.GetType();
+                Type messageType = message.GetType();
 
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => !selectorsForAssembly.ContainsKey(assembly)))
+                foreach (
+                    Assembly assembly in
+                        AppDomain.CurrentDomain.GetAssemblies().Where(
+                            assembly => !selectorsForAssembly.ContainsKey(assembly)))
                     selectorsForAssembly[assembly] =
                         assembly
                             .GetTypes()
@@ -48,24 +40,40 @@ namespace Honeycomb.Infrastructure
                                     {
                                         PossibleSelectorType = possibleSelectorType,
                                         Selectors = possibleSelectorType
-                                                        .GetInterfaces()
-                                                        .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
-                                                        .Where(selector => selector != typeof (SelectKeyForAggregate))
-                                                        .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
+                                    .GetInterfaces()
+                                    .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
+                                    .Where(selector => selector != typeof (SelectKeyForAggregate))
+                                    .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
                                     })
                             .Where(possibleSelectors => possibleSelectors.Selectors.Any())
                             .SelectMany(
-                                possibleSelectors => possibleSelectors.Selectors, 
-                                (possibleSelectors, selector) => 
-                                    new SelectorInfo(
-                                        selector.GetGenericArguments()[0],
-                                        (SelectKeyForAggregate) Activator.CreateInstance(possibleSelectors.PossibleSelectorType)))
+                                possibleSelectors => possibleSelectors.Selectors,
+                                (possibleSelectors, selector) =>
+                                new SelectorInfo(
+                                    selector.GetGenericArguments()[0],
+                                    (SelectKeyForAggregate)
+                                    Activator.CreateInstance(possibleSelectors.PossibleSelectorType)))
                             .ToArray();
-
                 }
 
                 return selectorsForMessage[messageType];
             }
         }
+
+        #region Nested type: SelectorInfo
+
+        public class SelectorInfo
+        {
+            public SelectorInfo(Type aggregateType, SelectKeyForAggregate selector)
+            {
+                AggregateType = aggregateType;
+                Selector = selector;
+            }
+
+            public Type AggregateType { get; private set; }
+            public SelectKeyForAggregate Selector { get; private set; }
+        }
+
+        #endregion
     }
 }

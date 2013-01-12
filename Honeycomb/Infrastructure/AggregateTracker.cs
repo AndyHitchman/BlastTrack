@@ -7,7 +7,8 @@ namespace Honeycomb.Infrastructure
 
     public class AggregateTracker
     {
-        private readonly Dictionary<Tuple<Type, object>, AggregateInfo> trackedAggregate = new Dictionary<Tuple<Type, object>, AggregateInfo>();
+        private readonly Dictionary<Tuple<Type, object>, AggregateInfo> trackedAggregate =
+            new Dictionary<Tuple<Type, object>, AggregateInfo>();
 
         public AggregateInfo this[Type aggregateType, object key]
         {
@@ -25,10 +26,7 @@ namespace Honeycomb.Infrastructure
 
         public AggregateInfo this[Aggregate aggregate]
         {
-            get
-            {
-                return trackedAggregate.Values.SingleOrDefault(_ => _.Instance == aggregate);
-            }
+            get { return trackedAggregate.Values.SingleOrDefault(_ => _.Instance == aggregate); }
         }
     }
 }
