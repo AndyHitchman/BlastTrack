@@ -1,7 +1,5 @@
 namespace Test.Honeycomb
 {
-    using System;
-    using System.Collections.Generic;
     using System.Transactions;
     using BlastTrack.Dogs;
     using NUnit.Framework;
@@ -20,7 +18,6 @@ namespace Test.Honeycomb
             domain.StartTransaction();
 
             string aggregateKey = "test";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
@@ -41,7 +38,6 @@ namespace Test.Honeycomb
 
             string aggregateKey = "test";
             string givenName = "Wolfie";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
@@ -62,8 +58,6 @@ namespace Test.Honeycomb
             domain.StartTransaction();
 
             string aggregateKey = "test";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
-
 
             AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
@@ -85,7 +79,6 @@ namespace Test.Honeycomb
 
             string aggregateKey = "test";
             string givenName = "Wolfie";
-            var raisedTime = new DateTime(2013, 01, 09, 15, 54, 20);
 
             AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
