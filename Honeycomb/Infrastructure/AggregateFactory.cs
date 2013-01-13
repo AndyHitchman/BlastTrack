@@ -27,19 +27,15 @@ namespace Honeycomb.Infrastructure
         protected internal void Create(AggregateInfo aggregateInfo, Event @event)
         {
             var aggregate = blank(aggregateInfo.Type);
-
             aggregateInfo.Instance = aggregate;
             aggregateInfo.Lifestate = AggregateLifestate.Live;
-
             construct(aggregateInfo, @event);
         }
 
         protected internal void Create(AggregateInfo aggregateInfo, Command command)
         {
             var aggregate = blank(aggregateInfo.Type);
-
             aggregateInfo.Instance = aggregate;
-
             construct(aggregateInfo, command);
         }
 
@@ -51,8 +47,7 @@ namespace Honeycomb.Infrastructure
         private static void construct(AggregateInfo aggregateInfo, Message creationMessage)
         {
             var creationConstructor = aggregateInfo.Type.GetConstructor(new[] {creationMessage.GetType()});
-            if (creationConstructor == null)
-                throw new MissingMethodException(aggregateInfo.Type.FullName, "constructor");
+            if (creationConstructor == null) throw new MissingMethodException(aggregateInfo.Type.FullName, "constructor");
 
             creationConstructor.Invoke(aggregateInfo.Instance, new object[] {creationMessage});
         }
@@ -67,8 +62,7 @@ namespace Honeycomb.Infrastructure
                 catch (ApplicationException e)
                 {
                     if (e.Source == "ReflectionMagic")
-                        throw new MissingMethodException(aggregate.GetType().FullName,
-                                                         "Receive(" + @event.GetType() + ")");
+                        throw new MissingMethodException(aggregate.GetType().FullName, "Receive(" + @event.GetType() + ")");
 
                     throw;
                 }

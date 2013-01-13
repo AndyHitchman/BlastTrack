@@ -6,12 +6,16 @@ namespace Honeycomb.Infrastructure
 
     public class AggregateResourceManager : ISinglePhaseNotification
     {
+        private readonly EventStore eventStore;
         private readonly List<UniqueEvent> changes;
-
-        public AggregateResourceManager(Transaction transaction)
+        private readonly Dictionary<Guid, UniqueEvent> changesByReceipt;
+ 
+        public AggregateResourceManager(EventStore eventStore, Transaction transaction)
         {
+            this.eventStore = eventStore;
             transaction.EnlistVolatile(this, EnlistmentOptions.None);
             changes = new List<UniqueEvent>();
+            changesByReceipt = new Dictionary<Guid, UniqueEvent>();
         }
 
         public void Prepare(PreparingEnlistment preparingEnlistment)
@@ -22,14 +26,12 @@ namespace Honeycomb.Infrastructure
         public void Commit(Enlistment enlistment)
         {
             emitAllRecordedChanges();
-
             enlistment.Done();
         }
 
         public void Rollback(Enlistment enlistment)
         {
             changes.Clear();
-
             enlistment.Done();
         }
 
@@ -41,14 +43,25 @@ namespace Honeycomb.Infrastructure
         public void SinglePhaseCommit(SinglePhaseEnlistment singlePhaseEnlistment)
         {
             emitAllRecordedChanges();
-
             singlePhaseEnlistment.Committed();
         }
 
-        public void RecordEvent(Event @event, List<AggregateInfo> applyToAggregates)
+        public Guid RecordEvent(Event @event, IEnumerable<AggregateInfo> applyToAggregates)
         {
-            var ue = new UniqueEvent(Guid.NewGuid(), @event, DateTimeOffset.UtcNow, applyToAggregates);
+            var ue = new UniqueEvent(@event, DateTimeOffset.UtcNow, applyToAggregates);
             changes.Add(ue);
+            changesByReceipt.Add(ue.Receipt, ue);
+            return ue.Receipt;
+        }
+
+        public void RecordConsumptionFailure(Guid receipt, AggregateInfo aggregateInfo, Exception exception)
+        {
+            changesByReceipt[receipt].RecordExceptionForConsumer(aggregateInfo, exception);
+        }
+
+        public void RecordConsumptionComplete(Guid receipt, AggregateInfo aggregateInfo)
+        {
+            changesByReceipt[receipt].RecordConsumptionComplete(aggregateInfo);
         }
 
         public IEnumerable<UniqueEvent> RecordedEvents
@@ -58,6 +71,10 @@ namespace Honeycomb.Infrastructure
 
         private void emitAllRecordedChanges()
         {
+            foreach (var @event in changes)
+            {
+                eventStore.RecordEvent(@event.EventType, @event.UntypedEvent, @event.AffectedAggregates);
+            }
         }
     }
 }

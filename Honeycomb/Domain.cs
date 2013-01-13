@@ -14,13 +14,14 @@
         protected readonly AggregateTracker AggregateTracker = new AggregateTracker();
         protected readonly EventStore EventStore;
         protected readonly SelectorMap Selectors = new SelectorMap();
-        protected readonly TransactionTracker TransactionTracker = new TransactionTracker();
+        protected readonly TransactionTracker TransactionTracker;
         protected readonly AggregateFactory AggregateFactory = new AggregateFactory();
 
         public Domain(EventStore eventStore)
         {
             Current = this;
             EventStore = eventStore;
+            TransactionTracker = new TransactionTracker(eventStore);
         }
 
         public TransactionScope StartTransaction()
@@ -36,11 +37,26 @@
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     selectAggregate(aggregateInfo);
 
-                //If we haven't found it in the domain, then create it, otherwise apply the command.
-                if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                    AggregateFactory.Create(aggregateInfo, command);
-                else
-                    aggregateInfo.Instance.AsDynamic().Apply(command);
+                try
+                {
+                    //If we haven't found it in the domain, then create it, otherwise apply the command.
+                    if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
+                        AggregateFactory.Create(aggregateInfo, command);
+                    else
+                        aggregateInfo.Instance.AsDynamic().Apply(command);
+                }
+                catch (ApplicationException e)
+                {
+                    if (e.Source == "ReflectionMagic")
+                        throw new MissingMethodException(
+                            aggregateInfo.Type.FullName,
+                            string.Format(
+                                "{0}({1})",
+                                aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "_ctor" : "Accept",
+                                command.GetType()));
+
+                    throw;
+                }
             }
         }
 
@@ -56,7 +72,7 @@
             var applyToAggregates = applyTo(@event).ToList();
 
             //Record before consuming to ensure order is preserved.
-            TransactionTracker[Transaction.Current].RecordEvent(@event, applyToAggregates);
+            var receipt = TransactionTracker[Transaction.Current].RecordEvent(@event, applyToAggregates);
 
             foreach (var aggregateInfo in applyToAggregates)
             {
@@ -64,22 +80,37 @@
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     selectAggregate(aggregateInfo);
 
-                //If we haven't found it in the domain, then create it, otherwise consume the event.
-                if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                    AggregateFactory.Create(aggregateInfo, @event);
-                else
+                try
+                {
                     try
                     {
-                        aggregateInfo.Instance.AsDynamic().Receive(@event);
+                        //If we haven't found it in the domain, then create it, otherwise consume the event.
+                        if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
+                            AggregateFactory.Create(aggregateInfo, @event);
+                        else
+                            aggregateInfo.Instance.AsDynamic().Receive(@event);
                     }
                     catch (ApplicationException e)
                     {
                         if (e.Source == "ReflectionMagic")
-                            throw new MissingMethodException(aggregateInfo.Type.FullName,
-                                                             "Receive(" + @event.GetType() + ")");
+                            throw new MissingMethodException(
+                                aggregateInfo.Type.FullName,
+                                string.Format(
+                                    "{0}({1})",
+                                    aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "Receive" : "Accept",
+                                    @event.GetType()));
 
                         throw;
                     }
+                }
+                catch(Exception e)
+                {
+                    TransactionTracker[Transaction.Current].RecordConsumptionFailure(receipt, aggregateInfo, e);
+                }
+                finally
+                {
+                    TransactionTracker[Transaction.Current].RecordConsumptionComplete(receipt, aggregateInfo);
+                }
             }
         }
 

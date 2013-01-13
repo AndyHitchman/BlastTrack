@@ -3,23 +3,29 @@ namespace Honeycomb
     using System;
     using System.Collections.Generic;
     using Infrastructure;
+    using System.Linq;
 
     public class UniqueEvent
     {
-        public UniqueEvent(Guid identity, Event @event, DateTimeOffset raisedTimestamp,
-                           List<AggregateInfo> applyToAggregates)
+        public class ConsumptionRecord
         {
-            Identity = identity;
+            public TimeSpan ExecutionTime { get; set; }
+            public Exception ConsumptionException { get; set; }
+        }
+
+        public UniqueEvent(Event @event, DateTimeOffset raisedTimestamp, IEnumerable<AggregateInfo> affectedAggregates)
+        {
+            Receipt = Guid.NewGuid();
             UntypedEvent = @event;
             RaisedTimestamp = raisedTimestamp;
-            ApplyToAggregates = applyToAggregates;
+            AffectedAggregates = affectedAggregates.ToDictionary(info => info, info => new ConsumptionRecord());
             EventType = @event.GetType();
         }
 
         /// <summary>
         ///   The unique identity of the event
         /// </summary>
-        public Guid Identity { get; private set; }
+        public Guid Receipt { get; private set; }
 
         /// <summary>
         ///   The event
@@ -39,6 +45,25 @@ namespace Honeycomb
         /// <summary>
         ///   Aggregates to apply the event to.
         /// </summary>
-        public List<AggregateInfo> ApplyToAggregates { get; private set; }
+        public Dictionary<AggregateInfo,ConsumptionRecord> AffectedAggregates { get; private set; }
+
+        /// <summary>
+        ///  Record an exception for an aggregate's consumption
+        /// </summary>
+        /// <param name="aggregateInfo"></param>
+        /// <param name="exception"></param>
+        public void RecordExceptionForConsumer(AggregateInfo aggregateInfo, Exception exception)
+        {
+            AffectedAggregates[aggregateInfo].ConsumptionException = exception;
+        }
+
+        /// <summary>
+        ///  Record completion of an aggregate's consumption
+        /// </summary>
+        /// <param name="aggregateInfo"></param>
+        public void RecordConsumptionComplete(AggregateInfo aggregateInfo)
+        {
+            AffectedAggregates[aggregateInfo].ExecutionTime = DateTimeOffset.UtcNow.Subtract(RaisedTimestamp);
+        }
     }
 }
