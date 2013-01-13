@@ -90,6 +90,8 @@ namespace Test.Honeycomb
                     });
 
             ai.Lifestate.ShouldEqual(AggregateLifestate.Live);
+            ((string)ai.Instance.AsDynamic().earbrand).ShouldEqual(aggregateKey);
+            ((string)ai.Instance.AsDynamic().name).ShouldEqual(givenName);
         }
     }
 }
