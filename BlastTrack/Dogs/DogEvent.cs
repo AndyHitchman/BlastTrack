@@ -2,9 +2,9 @@ namespace BlastTrack.Dogs
 {
     using Honeycomb;
 
-    public class DogEvent : Event
+    public abstract class DogEvent : Event
     {
-        public DogEvent(string earbrand)
+        protected DogEvent(string earbrand)
         {
             Earbrand = earbrand;
         }

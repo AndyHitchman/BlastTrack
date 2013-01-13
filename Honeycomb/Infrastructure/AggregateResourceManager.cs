@@ -28,7 +28,7 @@ namespace Honeycomb.Infrastructure
 
         public void Rollback(Enlistment enlistment)
         {
-            //TODO Throw away
+            changes.Clear();
 
             enlistment.Done();
         }
@@ -51,7 +51,10 @@ namespace Honeycomb.Infrastructure
             changes.Add(ue);
         }
 
-        public IEnumerable<UniqueEvent> RecordedEvents { get { return changes; } } 
+        public IEnumerable<UniqueEvent> RecordedEvents
+        {
+            get { return changes; }
+        }
 
         private void emitAllRecordedChanges()
         {

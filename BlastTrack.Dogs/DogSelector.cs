@@ -11,7 +11,6 @@ namespace BlastTrack.Dogs
             return message.Earbrand;
         }
 
-
         public object SelectKey(DogEvent message)
         {
             return message.Earbrand;

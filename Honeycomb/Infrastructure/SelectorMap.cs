@@ -16,10 +16,10 @@ namespace Honeycomb.Infrastructure
         {
             get
             {
-                Type messageType = message.GetType();
+                var messageType = message.GetType();
 
                 foreach (
-                    Assembly assembly in
+                    var assembly in
                         AppDomain.CurrentDomain.GetAssemblies().Where(
                             assembly => !selectorsForAssembly.ContainsKey(assembly)))
                     selectorsForAssembly[assembly] =

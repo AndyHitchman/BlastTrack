@@ -8,7 +8,7 @@ namespace Honeycomb
     {
         public static void Apply<TAggregate>(this Command cmd) where TAggregate : Aggregate
         {
-//            var eventsForAggregate
+            Domain.Current.Apply(cmd);
         }
     }
 }

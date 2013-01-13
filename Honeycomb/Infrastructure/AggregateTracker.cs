@@ -3,7 +3,6 @@ namespace Honeycomb.Infrastructure
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
 
     public class AggregateTracker
     {
@@ -18,7 +17,7 @@ namespace Honeycomb.Infrastructure
 
                 if (!trackedAggregate.ContainsKey(id))
                     trackedAggregate[id] =
-                        new AggregateInfo(aggregateType, key, new AggregateResourceManager(Transaction.Current));
+                        new AggregateInfo(aggregateType, key);
 
                 return trackedAggregate[id];
             }

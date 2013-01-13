@@ -4,7 +4,7 @@ namespace Honeycomb.Infrastructure
 
     public class AggregateInfo
     {
-        public AggregateInfo(Type aggregateType, object key, AggregateResourceManager aggregateResourceManager)
+        public AggregateInfo(Type aggregateType, object key)
         {
             Type = aggregateType;
             Key = key;

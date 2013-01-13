@@ -6,7 +6,8 @@ namespace Honeycomb
 
     public class UniqueEvent
     {
-        public UniqueEvent(Guid identity, Event @event, DateTimeOffset raisedTimestamp, List<AggregateInfo> applyToAggregates)
+        public UniqueEvent(Guid identity, Event @event, DateTimeOffset raisedTimestamp,
+                           List<AggregateInfo> applyToAggregates)
         {
             Identity = identity;
             UntypedEvent = @event;
@@ -16,27 +17,27 @@ namespace Honeycomb
         }
 
         /// <summary>
-        /// The unique identity of the event
+        ///   The unique identity of the event
         /// </summary>
         public Guid Identity { get; private set; }
 
         /// <summary>
-        /// The event
+        ///   The event
         /// </summary>
         public Event UntypedEvent { get; private set; }
 
         /// <summary>
-        /// Type of the event
+        ///   Type of the event
         /// </summary>
         public Type EventType { get; private set; }
 
         /// <summary>
-        /// The timestamp when the event was raised.
+        ///   The timestamp when the event was raised.
         /// </summary>
         public DateTimeOffset RaisedTimestamp { get; private set; }
 
         /// <summary>
-        /// Aggregates to apply the event to.
+        ///   Aggregates to apply the event to.
         /// </summary>
         public List<AggregateInfo> ApplyToAggregates { get; private set; }
     }

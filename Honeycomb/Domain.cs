@@ -29,7 +29,7 @@
 
         public void Apply(Command command)
         {
-            foreach (AggregateInfo aggregateInfo in applyTo(command))
+            foreach (var aggregateInfo in applyTo(command))
             {
                 //If it's not tracked, then select it from the domain.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
@@ -52,7 +52,7 @@
             //Record before consuming to ensure order is preserved.
             TransactionTracker[Transaction.Current].RecordEvent(@event, applyToAggregates);
 
-            foreach (AggregateInfo aggregateInfo in applyToAggregates)
+            foreach (var aggregateInfo in applyToAggregates)
             {
                 //If it's not tracked, then select it from the domain.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
@@ -68,8 +68,9 @@
                     }
                     catch (ApplicationException e)
                     {
-                        if(e.Source == "ReflectionMagic")
-                            throw new MissingMethodException(aggregateInfo.Type.FullName, "Receive(" + @event.GetType() + ")");
+                        if (e.Source == "ReflectionMagic")
+                            throw new MissingMethodException(aggregateInfo.Type.FullName,
+                                                             "Receive(" + @event.GetType() + ")");
 
                         throw;
                     }
@@ -78,17 +79,17 @@
 
         private void selectAggregate(AggregateInfo aggregateInfo)
         {
-            IEnumerable<Event> replayEvents = EventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
+            var replayEvents = EventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
             if (replayEvents.Any())
                 AggregateFactory.Buildup(aggregateInfo, replayEvents);
         }
 
         private IEnumerable<AggregateInfo> applyTo(Message message)
         {
-            foreach (SelectorMap.SelectorInfo selectorInfo in Selectors[message])
+            foreach (var selectorInfo in Selectors[message])
             {
                 var key = (object) selectorInfo.Selector.AsDynamic().SelectKey(message);
-                AggregateInfo aggregateInfo = AggregateTracker[selectorInfo.AggregateType, key];
+                var aggregateInfo = AggregateTracker[selectorInfo.AggregateType, key];
 
                 if (aggregateInfo.Lifestate == AggregateLifestate.Building) continue;
 

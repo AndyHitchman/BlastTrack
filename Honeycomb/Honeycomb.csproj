@@ -46,9 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aggregate.cs" />
-    <Compile Include="AggregateSelectorAttribute.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="Consumes.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="EventStore.cs" />
     <Compile Include="Infrastructure\AggregateFactory.cs" />

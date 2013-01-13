@@ -5,6 +5,5 @@ namespace Honeycomb.Infrastructure
         Untracked,
         Building,
         Live,
-        Lapsed
     }
 }

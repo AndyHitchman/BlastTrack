@@ -4,11 +4,11 @@ namespace BlastTrack.Dogs
 
     public class DogRequiresVaccinationWithin12Weeks : Event
     {
-        private readonly string earbrand;
-
         public DogRequiresVaccinationWithin12Weeks(string earbrand)
         {
-            this.earbrand = earbrand;
+            Earbrand = earbrand;
         }
+
+        public string Earbrand { get; private set; }
     }
 }

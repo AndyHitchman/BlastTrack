@@ -17,9 +17,9 @@ namespace Test.Honeycomb
             var domain = new TestableDomain(null);
             domain.StartTransaction();
 
-            string aggregateKey = "test";
+            var aggregateKey = "test";
 
-            AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
+            var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]
@@ -36,10 +36,10 @@ namespace Test.Honeycomb
             var domain = new TestableDomain(null);
             domain.StartTransaction();
 
-            string aggregateKey = "test";
-            string givenName = "Wolfie";
+            var aggregateKey = "test";
+            var givenName = "Wolfie";
 
-            AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
+            var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]
@@ -57,9 +57,9 @@ namespace Test.Honeycomb
             var domain = new TestableDomain(null);
             domain.StartTransaction();
 
-            string aggregateKey = "test";
+            var aggregateKey = "test";
 
-            AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
+            var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]
@@ -77,10 +77,10 @@ namespace Test.Honeycomb
             var domain = new TestableDomain(null);
             domain.StartTransaction();
 
-            string aggregateKey = "test";
-            string givenName = "Wolfie";
+            var aggregateKey = "test";
+            var givenName = "Wolfie";
 
-            AggregateInfo ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
+            var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
             AggregateFactory.Buildup(
                 ai,
                 new Event[]

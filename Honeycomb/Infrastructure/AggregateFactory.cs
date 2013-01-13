@@ -3,18 +3,17 @@ namespace Honeycomb.Infrastructure
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using System.Runtime.Serialization;
     using ReflectionMagic;
 
     public static class AggregateFactory
     {
-        public static void Buildup(AggregateInfo aggregateInfo, IEnumerable<Event> replayEvents)
+        public static void Buildup(AggregateInfo aggregateInfo, ICollection<Event> replayEvents)
         {
-            Event creationEvent = replayEvents.First();
-            IEnumerable<Event> changeEvents = replayEvents.Skip(1);
+            var creationEvent = replayEvents.First();
+            var changeEvents = replayEvents.Skip(1);
 
-            Aggregate aggregate = blank(aggregateInfo.Type);
+            var aggregate = blank(aggregateInfo.Type);
 
             aggregateInfo.Instance = aggregate;
             aggregateInfo.Lifestate = AggregateLifestate.Building;
@@ -27,7 +26,7 @@ namespace Honeycomb.Infrastructure
 
         public static void Create(AggregateInfo aggregateInfo, Event @event)
         {
-            Aggregate aggregate = blank(aggregateInfo.Type);
+            var aggregate = blank(aggregateInfo.Type);
 
             aggregateInfo.Instance = aggregate;
             aggregateInfo.Lifestate = AggregateLifestate.Live;
@@ -37,7 +36,7 @@ namespace Honeycomb.Infrastructure
 
         public static void Create(AggregateInfo aggregateInfo, Command command)
         {
-            Aggregate aggregate = blank(aggregateInfo.Type);
+            var aggregate = blank(aggregateInfo.Type);
 
             aggregateInfo.Instance = aggregate;
 
@@ -51,7 +50,7 @@ namespace Honeycomb.Infrastructure
 
         private static void construct(AggregateInfo aggregateInfo, Message creationMessage)
         {
-            ConstructorInfo creationConstructor = aggregateInfo.Type.GetConstructor(new[] {creationMessage.GetType()});
+            var creationConstructor = aggregateInfo.Type.GetConstructor(new[] {creationMessage.GetType()});
             if (creationConstructor == null)
                 throw new MissingMethodException(aggregateInfo.Type.FullName, "constructor");
 
@@ -60,7 +59,7 @@ namespace Honeycomb.Infrastructure
 
         private static void replay(IEnumerable<Event> changeEvents, Aggregate aggregate)
         {
-            foreach (Event @event in changeEvents)
+            foreach (var @event in changeEvents)
                 try
                 {
                     aggregate.AsDynamic().Receive(@event);
@@ -68,7 +67,8 @@ namespace Honeycomb.Infrastructure
                 catch (ApplicationException e)
                 {
                     if (e.Source == "ReflectionMagic")
-                        throw new MissingMethodException(aggregate.GetType().FullName, "Receive(" + @event.GetType() + ")");
+                        throw new MissingMethodException(aggregate.GetType().FullName,
+                                                         "Receive(" + @event.GetType() + ")");
 
                     throw;
                 }

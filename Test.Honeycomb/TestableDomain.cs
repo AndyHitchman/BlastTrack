@@ -9,9 +9,24 @@
         {
         }
 
-        public new AggregateTracker AggregateTracker { get { return base.AggregateTracker; } }
-        public new EventStore EventStore { get { return base.EventStore; } }
-        public new SelectorMap Selectors { get { return base.Selectors; } }
-        public new TransactionTracker TransactionTracker { get { return base.TransactionTracker; } }
+        public new AggregateTracker AggregateTracker
+        {
+            get { return base.AggregateTracker; }
+        }
+
+        public new EventStore EventStore
+        {
+            get { return base.EventStore; }
+        }
+
+        public new SelectorMap Selectors
+        {
+            get { return base.Selectors; }
+        }
+
+        public new TransactionTracker TransactionTracker
+        {
+            get { return base.TransactionTracker; }
+        }
     }
 }
