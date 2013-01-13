@@ -6,9 +6,9 @@ namespace Honeycomb.Infrastructure
     using System.Runtime.Serialization;
     using ReflectionMagic;
 
-    public static class AggregateFactory
+    public class AggregateFactory
     {
-        public static void Buildup(AggregateInfo aggregateInfo, ICollection<Event> replayEvents)
+        protected internal void Buildup(AggregateInfo aggregateInfo, ICollection<Event> replayEvents)
         {
             var creationEvent = replayEvents.First();
             var changeEvents = replayEvents.Skip(1);
@@ -24,7 +24,7 @@ namespace Honeycomb.Infrastructure
             aggregateInfo.Lifestate = AggregateLifestate.Live;
         }
 
-        public static void Create(AggregateInfo aggregateInfo, Event @event)
+        protected internal void Create(AggregateInfo aggregateInfo, Event @event)
         {
             var aggregate = blank(aggregateInfo.Type);
 
@@ -34,7 +34,7 @@ namespace Honeycomb.Infrastructure
             construct(aggregateInfo, @event);
         }
 
-        public static void Create(AggregateInfo aggregateInfo, Command command)
+        protected internal void Create(AggregateInfo aggregateInfo, Command command)
         {
             var aggregate = blank(aggregateInfo.Type);
 

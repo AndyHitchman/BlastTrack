@@ -15,11 +15,12 @@
         protected readonly EventStore EventStore;
         protected readonly SelectorMap Selectors = new SelectorMap();
         protected readonly TransactionTracker TransactionTracker = new TransactionTracker();
+        protected readonly AggregateFactory AggregateFactory = new AggregateFactory();
 
         public Domain(EventStore eventStore)
         {
             Current = this;
-            this.EventStore = eventStore;
+            EventStore = eventStore;
         }
 
         public TransactionScope StartTransaction()

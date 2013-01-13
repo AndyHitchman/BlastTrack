@@ -20,7 +20,7 @@ namespace Test.Honeycomb
             var aggregateKey = "test";
 
             var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
-            AggregateFactory.Buildup(
+            new TestableAggregateFactory().Buildup(
                 ai,
                 new Event[]
                     {
@@ -40,7 +40,7 @@ namespace Test.Honeycomb
             var givenName = "Wolfie";
 
             var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
-            AggregateFactory.Buildup(
+            new TestableAggregateFactory().Buildup(
                 ai,
                 new Event[]
                     {
@@ -60,7 +60,7 @@ namespace Test.Honeycomb
             var aggregateKey = "test";
 
             var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
-            AggregateFactory.Buildup(
+            new TestableAggregateFactory().Buildup(
                 ai,
                 new Event[]
                     {
@@ -81,7 +81,7 @@ namespace Test.Honeycomb
             var givenName = "Wolfie";
 
             var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
-            AggregateFactory.Buildup(
+            new TestableAggregateFactory().Buildup(
                 ai,
                 new Event[]
                     {
