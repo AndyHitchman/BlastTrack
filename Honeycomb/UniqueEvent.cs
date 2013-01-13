@@ -1,14 +1,17 @@
 namespace Honeycomb
 {
     using System;
+    using System.Collections.Generic;
+    using Infrastructure;
 
     public class UniqueEvent
     {
-        public UniqueEvent(Guid identity, Event @event, DateTime raisedTimestamp)
+        public UniqueEvent(Guid identity, Event @event, DateTimeOffset raisedTimestamp, List<AggregateInfo> applyToAggregates)
         {
             Identity = identity;
             UntypedEvent = @event;
             RaisedTimestamp = raisedTimestamp;
+            ApplyToAggregates = applyToAggregates;
             EventType = @event.GetType();
         }
 
@@ -30,6 +33,11 @@ namespace Honeycomb
         /// <summary>
         /// The timestamp when the event was raised.
         /// </summary>
-        public DateTime RaisedTimestamp { get; private set; }
+        public DateTimeOffset RaisedTimestamp { get; private set; }
+
+        /// <summary>
+        /// Aggregates to apply the event to.
+        /// </summary>
+        public List<AggregateInfo> ApplyToAggregates { get; private set; }
     }
 }

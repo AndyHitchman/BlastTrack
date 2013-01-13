@@ -8,7 +8,7 @@ namespace Honeycomb
     {
         public static void Raise(this Aggregate aggregate, Event @event)
         {
-            Domain.Current.Raise(@event);
+            Domain.Current.Raise(aggregate, @event);
         }
     }
 }

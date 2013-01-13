@@ -60,8 +60,6 @@ namespace Honeycomb.Infrastructure
             }
         }
 
-        #region Nested type: SelectorInfo
-
         public class SelectorInfo
         {
             public SelectorInfo(Type aggregateType, SelectKeyForAggregate selector)
@@ -73,7 +71,5 @@ namespace Honeycomb.Infrastructure
             public Type AggregateType { get; private set; }
             public SelectKeyForAggregate Selector { get; private set; }
         }
-
-        #endregion
     }
 }

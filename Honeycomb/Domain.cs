@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using Infrastructure;
     using ReflectionMagic;
 
@@ -10,14 +11,20 @@
     {
         public static Domain Current;
 
-        public readonly AggregateTracker Tracked = new AggregateTracker();
-        private readonly EventStore eventStore;
-        private readonly SelectorMap selectors = new SelectorMap();
+        protected readonly AggregateTracker AggregateTracker = new AggregateTracker();
+        protected readonly EventStore EventStore;
+        protected readonly SelectorMap Selectors = new SelectorMap();
+        protected readonly TransactionTracker TransactionTracker = new TransactionTracker();
 
         public Domain(EventStore eventStore)
         {
             Current = this;
-            this.eventStore = eventStore;
+            this.EventStore = eventStore;
+        }
+
+        public TransactionScope StartTransaction()
+        {
+            return new TransactionScope();
         }
 
         public void Apply(Command command)
@@ -36,16 +43,20 @@
             }
         }
 
-        public void Raise(Event @event)
+        public void Raise(Aggregate source, Event @event)
         {
-            foreach (AggregateInfo aggregateInfo in applyTo(@event))
+            if (AggregateTracker[source].Lifestate == AggregateLifestate.Building) return;
+
+            var applyToAggregates = applyTo(@event).ToList();
+
+            //Record before consuming to ensure order is preserved.
+            TransactionTracker[Transaction.Current].RecordEvent(@event, applyToAggregates);
+
+            foreach (AggregateInfo aggregateInfo in applyToAggregates)
             {
                 //If it's not tracked, then select it from the domain.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     selectAggregate(aggregateInfo);
-
-                //Record before consuming to ensure order is preserved.
-                aggregateInfo.ResourceManager.RecordChange(@event);
 
                 //If we haven't found it in the domain, then create it, otherwise consume the event.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
@@ -67,17 +78,17 @@
 
         private void selectAggregate(AggregateInfo aggregateInfo)
         {
-            IEnumerable<Event> replayEvents = eventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
+            IEnumerable<Event> replayEvents = EventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
             if (replayEvents.Any())
                 AggregateFactory.Buildup(aggregateInfo, replayEvents);
         }
 
         private IEnumerable<AggregateInfo> applyTo(Message message)
         {
-            foreach (SelectorMap.SelectorInfo selectorInfo in selectors[message])
+            foreach (SelectorMap.SelectorInfo selectorInfo in Selectors[message])
             {
                 var key = (object) selectorInfo.Selector.AsDynamic().SelectKey(message);
-                AggregateInfo aggregateInfo = Tracked[selectorInfo.AggregateType, key];
+                AggregateInfo aggregateInfo = AggregateTracker[selectorInfo.AggregateType, key];
 
                 if (aggregateInfo.Lifestate == AggregateLifestate.Building) continue;
 

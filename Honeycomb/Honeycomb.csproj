@@ -55,6 +55,7 @@
     <Compile Include="Infrastructure\AggregateInfo.cs" />
     <Compile Include="Infrastructure\AggregateLifestate.cs" />
     <Compile Include="Infrastructure\AggregateResourceManager.cs" />
+    <Compile Include="Infrastructure\TransactionTracker.cs" />
     <Compile Include="Infrastructure\SelectorMap.cs" />
     <Compile Include="Infrastructure\AggregateTracker.cs" />
     <Compile Include="Message.cs" />

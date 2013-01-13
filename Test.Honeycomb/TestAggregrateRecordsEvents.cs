@@ -18,20 +18,22 @@ namespace Test.Honeycomb
         public void events_raised_whilst_handling_commands_should_be_recorded()
         {
             var eventStore = Substitute.For<EventStore>();
-            var domain = new Domain(eventStore);
-            var ts = new TransactionScope();
+            var domain = new TestableDomain(eventStore);
+            domain.StartTransaction();
 
             string key = "test";
 
             domain.Apply(new RegisterDog(key, null, null));
 
-            AggregateInfo aggregateInfo = domain.Tracked[typeof (Dog), key];
+            AggregateInfo aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
             ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
 
-            var recorded = (List<Event>) aggregateInfo.ResourceManager.AsDynamic().changes;
+            var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
             recorded.Count().ShouldEqual(2);
-            recorded.First().ShouldBeType<DogRegistered>();
-            recorded.Skip(1).First().ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
+            recorded.First().EventType.ShouldEqual(typeof(DogRegistered));
+            recorded.First().UntypedEvent.ShouldBeType<DogRegistered>();
+            recorded.Skip(1).First().EventType.ShouldEqual(typeof(DogRequiresVaccinationWithin12Weeks));
+            recorded.Skip(1).First().UntypedEvent.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
         }
 
 //        [Test]
