@@ -1,5 +1,6 @@
 namespace Test.Honeycomb
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -68,19 +69,37 @@ namespace Test.Honeycomb
             var ts = domain.StartTransaction();
 
             var key = "test";
+            var affectedAggregates = new List<Dictionary<AggregateInfo, UniqueEvent.ConsumptionRecord>>();
             var expected = new RegisterDog(key, null, null);
 
+            eventStore.RecordEvent(
+                          Arg.Any<Type>(),
+                          Arg.Any<Event>(),
+                          Arg.Do<Dictionary<AggregateInfo, UniqueEvent.ConsumptionRecord>>(p => affectedAggregates.Add(p)));
+            
             domain.Apply(expected);
 
             ts.Complete();
+            ts.Dispose();
 
-            Dictionary<AggregateInfo, UniqueEvent.ConsumptionRecord> affectedAggregates;
             eventStore.Received()
-                .RecordEvent(
-                typeof(DogRegistered), 
-                Arg.Any<DogRegistered>(), 
-                Arg.Do<Dictionary<AggregateInfo,UniqueEvent.ConsumptionRecord>>(p => affectedAggregates = p));
+                      .RecordEvent(
+                          typeof (DogRegistered),
+                          Arg.Any<DogRegistered>(),
+                          Arg.Any<Dictionary<AggregateInfo, UniqueEvent.ConsumptionRecord>>());
 
+            eventStore.Received()
+                      .RecordEvent(
+                          typeof (DogRequiresVaccinationWithin12Weeks),
+                          Arg.Any<DogRequiresVaccinationWithin12Weeks>(),
+                          Arg.Any<Dictionary<AggregateInfo, UniqueEvent.ConsumptionRecord>>());
+
+            affectedAggregates.Count.ShouldEqual(2);
+            affectedAggregates[0].Count.ShouldEqual(1);
+            affectedAggregates[1].Count.ShouldEqual(0);
+
+            affectedAggregates[0][domain.AggregateTracker[typeof(Dog), key]].ConsumptionException.ShouldBeNull();
+            affectedAggregates[0][domain.AggregateTracker[typeof(Dog), key]].ExecutionTime.CompareTo(TimeSpan.Zero).ShouldBeInRange(1, 1);
         }
     }
 }
