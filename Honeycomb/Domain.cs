@@ -43,9 +43,14 @@
             }
         }
 
+        public void Raise(Event @event)
+        {
+            Raise(null, @event);
+        }
+
         public void Raise(Aggregate source, Event @event)
         {
-            if (AggregateTracker[source].Lifestate == AggregateLifestate.Building) return;
+            if (source != null && AggregateTracker[source].Lifestate == AggregateLifestate.Building) return;
 
             var applyToAggregates = applyTo(@event).ToList();
 
