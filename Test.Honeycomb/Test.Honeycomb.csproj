@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestInProcessBus.cs" />
     <Compile Include="TestableAggregateFactory.cs" />
     <Compile Include="TestableDomain.cs" />
     <Compile Include="TestAggregrateRecordsEvents.cs" />

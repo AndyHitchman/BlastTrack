@@ -8,15 +8,15 @@ namespace Honeycomb.Infrastructure
     public class AggregateResourceManager : ISinglePhaseNotification
     {
         private readonly EventEmitter eventEmitter;
-        private readonly List<UniqueEvent> changes;
-        private readonly Dictionary<Guid, UniqueEvent> changesByReceipt;
+        private readonly string transactionId;
+        private readonly List<RaisedEvent> changes;
  
         public AggregateResourceManager(EventEmitter eventEmitter, Transaction transaction)
         {
             this.eventEmitter = eventEmitter;
+            transactionId = transaction.TransactionInformation.LocalIdentifier;
             transaction.EnlistVolatile(this, EnlistmentOptions.None);
-            changes = new List<UniqueEvent>();
-            changesByReceipt = new Dictionary<Guid, UniqueEvent>();
+            changes = new List<RaisedEvent>();
         }
 
         public void Prepare(PreparingEnlistment preparingEnlistment)
@@ -47,25 +47,13 @@ namespace Honeycomb.Infrastructure
             singlePhaseEnlistment.Committed();
         }
 
-        public Guid RecordEvent(Event @event, IEnumerable<AggregateInfo> applyToAggregates)
+        public void RecordEvent(Event @event)
         {
-            var ue = new UniqueEvent(@event, DateTimeOffset.UtcNow, applyToAggregates);
+            var ue = new RaisedEvent(@event, transactionId, DateTimeOffset.UtcNow);
             changes.Add(ue);
-            changesByReceipt.Add(ue.Receipt, ue);
-            return ue.Receipt;
         }
 
-        public void RecordConsumptionFailure(Guid receipt, AggregateInfo aggregateInfo, Exception exception)
-        {
-            changesByReceipt[receipt].RecordExceptionForConsumer(aggregateInfo, exception);
-        }
-
-        public void RecordConsumptionComplete(Guid receipt, AggregateInfo aggregateInfo)
-        {
-            changesByReceipt[receipt].RecordConsumptionComplete(aggregateInfo);
-        }
-
-        public IEnumerable<UniqueEvent> RecordedEvents
+        public IEnumerable<RaisedEvent> RecordedEvents
         {
             get { return changes; }
         }
@@ -74,7 +62,7 @@ namespace Honeycomb.Infrastructure
         {
             foreach (var @event in changes)
             {
-                eventEmitter.Emit(@event.EventType, @event.UntypedEvent);
+                eventEmitter.Emit(@event);
             }
         }
     }

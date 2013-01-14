@@ -5,6 +5,6 @@
 
     public interface EventEmitter
     {
-        void Emit(Type eventType, Event untypedEvent);
+        void Emit(RaisedEvent eventType);
     }
 }

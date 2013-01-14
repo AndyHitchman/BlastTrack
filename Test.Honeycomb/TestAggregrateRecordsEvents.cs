@@ -20,46 +20,52 @@ namespace Test.Honeycomb
         public void events_raised_whilst_handling_commands_should_be_recorded()
         {
             var eventStore = Substitute.For<EventStore>();
-            var domain = new TestableDomain(null, null, eventStore);
-            domain.StartTransaction();
 
-            var key = "test";
+            using (var ts = new TransactionScope())
+            {
+                var domain = new TestableDomain(null, null, eventStore);
 
-            domain.Apply(new RegisterDog(key, null, null));
+                var key = "test";
 
-            var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
-            ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
-            aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Live);
+                domain.Apply(new RegisterDog(key, null, null));
 
-            var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
-            recorded.Count().ShouldEqual(2);
-            recorded.First().EventType.ShouldEqual(typeof (DogRegistered));
-            recorded.First().UntypedEvent.ShouldBeType<DogRegistered>();
-            recorded.Skip(1).First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
-            recorded.Skip(1).First().UntypedEvent.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
+                var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
+                aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Untracked);
+
+                var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
+                recorded.Count().ShouldEqual(1);
+                recorded.First().EventType.ShouldEqual(typeof (DogRegistered));
+                recorded.First().UntypedEvent.ShouldBeType<DogRegistered>();
+            }
         }
 
         [Test]
         public void events_raised_whilst_consuming_events_should_be_recorded()
         {
             var eventStore = Substitute.For<EventStore>();
-            var domain = new TestableDomain(null, null, eventStore);
-            domain.StartTransaction();
 
-            var key = "test";
+            using (var ts = new TransactionScope())
+            {
+                var domain = new TestableDomain(null, null, eventStore);
 
-            domain.Raise(new DogRegistered(key, null));
+                var key = "test";
 
-            var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
-            ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
-            aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Live);
+                domain.Consume(
+                    new PendingEvent(
+                        new RaisedEvent(
+                            new DogRegistered(key, null), 
+                            Transaction.Current.TransactionInformation.LocalIdentifier, 
+                            DateTimeOffset.UtcNow)));
 
-            var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
-            recorded.Count().ShouldEqual(2);
-            recorded.First().EventType.ShouldEqual(typeof (DogRegistered));
-            recorded.First().UntypedEvent.ShouldBeType<DogRegistered>();
-            recorded.Skip(1).First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
-            recorded.Skip(1).First().UntypedEvent.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
+                var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
+                ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
+                aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Live);
+
+                var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
+                recorded.Count().ShouldEqual(1);
+                recorded.First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
+                recorded.First().UntypedEvent.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
+            }
         }
 
         [Test]
@@ -67,19 +73,21 @@ namespace Test.Honeycomb
         {
             var eventEmitter = Substitute.For<EventEmitter>();
             var eventStore = Substitute.For<EventStore>();
-            var domain = new TestableDomain(eventEmitter, null, eventStore);
-            var ts = domain.StartTransaction();
-
             var key = "test";
-            var expected = new RegisterDog(key, null, null);
-        
-            domain.Apply(expected);
 
-            ts.Complete();
-            ts.Dispose();
+            using (var ts = new TransactionScope())
+            {
+                var domain = new TestableDomain(eventEmitter, null, eventStore);
 
-            eventEmitter.Received().Emit(Arg.Is<Type>(_ => _ == typeof (DogRegistered)), Arg.Any<DogRegistered>());
-            eventEmitter.Received().Emit(Arg.Is<Type>(_ => _ == typeof (DogRequiresVaccinationWithin12Weeks)), Arg.Any<DogRequiresVaccinationWithin12Weeks>());
+                var expected = new RegisterDog(key, null, null);
+
+                domain.Apply(expected);
+
+                ts.Complete();
+            }
+
+//            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered)));
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered) && ((DogRegistered)_.UntypedEvent).Earbrand == key));
         }
     }
 }

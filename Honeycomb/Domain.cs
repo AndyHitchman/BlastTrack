@@ -29,12 +29,7 @@
             TransactionTracker = new TransactionTracker(emitter);
         }
 
-        public TransactionScope StartTransaction()
-        {
-            return new TransactionScope();
-        }
-
-        public void Apply(Command command)
+        public virtual void Apply(Command command)
         {
             foreach (var aggregateInfo in applyTo(command))
             {
@@ -65,19 +60,9 @@
             }
         }
 
-        public void Raise(Event @event)
+        public virtual void Consume(PendingEvent pendingEvent)
         {
-            Raise(null, @event);
-        }
-
-        public void Raise(Aggregate source, Event @event)
-        {
-            if (source != null && AggregateTracker[source].Lifestate == AggregateLifestate.Building) return;
-
-            var applyToAggregates = applyTo(@event).ToList();
-
-            //Record before consuming to ensure order is preserved.
-            var receipt = TransactionTracker[Transaction.Current].RecordEvent(@event, applyToAggregates);
+            var applyToAggregates = applyTo(pendingEvent.Event).ToList();
 
             foreach (var aggregateInfo in applyToAggregates)
             {
@@ -91,9 +76,9 @@
                     {
                         //If we haven't found it in the domain, then create it, otherwise consume the event.
                         if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                            AggregateFactory.Create(aggregateInfo, @event);
+                            AggregateFactory.Create(aggregateInfo, pendingEvent.Event);
                         else
-                            aggregateInfo.Instance.AsDynamic().Receive(@event);
+                            aggregateInfo.Instance.AsDynamic().Receive(pendingEvent);
                     }
                     catch (ApplicationException e)
                     {
@@ -103,20 +88,27 @@
                                 string.Format(
                                     "{0}({1})",
                                     aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "Receive" : "Accept",
-                                    @event.GetType()));
+                                    pendingEvent.GetType()));
 
                         throw;
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    TransactionTracker[Transaction.Current].RecordConsumptionFailure(receipt, aggregateInfo, e);
+                    pendingEvent.RecordConsumptionFailure(aggregateInfo, e);
                 }
                 finally
                 {
-                    TransactionTracker[Transaction.Current].RecordConsumptionComplete(receipt, aggregateInfo);
+                    pendingEvent.RecordConsumptionComplete(aggregateInfo);
                 }
             }
+        }
+
+        public virtual void Raise(Aggregate source, Event @event)
+        {
+            if (source != null && AggregateTracker[source].Lifestate == AggregateLifestate.Building) return;
+
+            TransactionTracker[Transaction.Current].RecordEvent(@event);
         }
 
         private void selectAggregate(AggregateInfo aggregateInfo)
