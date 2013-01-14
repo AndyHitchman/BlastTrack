@@ -2,22 +2,23 @@ namespace Honeycomb.Infrastructure
 {
     using System.Runtime.CompilerServices;
     using System.Transactions;
+    using Plumbing;
 
     public class TransactionTracker
     {
-        private readonly EventStore eventStore;
+        private readonly EventEmitter emitter;
 
         private readonly ConditionalWeakTable<Transaction, AggregateResourceManager> resourceManagersForTransactions =
             new ConditionalWeakTable<Transaction, AggregateResourceManager>();
 
-        public TransactionTracker(EventStore eventStore)
+        public TransactionTracker(EventEmitter emitter)
         {
-            this.eventStore = eventStore;
+            this.emitter = emitter;
         }
 
         public AggregateResourceManager this[Transaction transaction]
         {
-            get { return resourceManagersForTransactions.GetValue(transaction, key => new AggregateResourceManager(eventStore, key)); }
+            get { return resourceManagersForTransactions.GetValue(transaction, key => new AggregateResourceManager(emitter, key)); }
         }
     }
 }

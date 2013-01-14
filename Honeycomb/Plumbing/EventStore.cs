@@ -1,4 +1,4 @@
-namespace Honeycomb
+namespace Honeycomb.Plumbing
 {
     using System;
     using System.Collections.Generic;

@@ -3,16 +3,17 @@ namespace Honeycomb.Infrastructure
     using System;
     using System.Collections.Generic;
     using System.Transactions;
+    using Plumbing;
 
     public class AggregateResourceManager : ISinglePhaseNotification
     {
-        private readonly EventStore eventStore;
+        private readonly EventEmitter eventEmitter;
         private readonly List<UniqueEvent> changes;
         private readonly Dictionary<Guid, UniqueEvent> changesByReceipt;
  
-        public AggregateResourceManager(EventStore eventStore, Transaction transaction)
+        public AggregateResourceManager(EventEmitter eventEmitter, Transaction transaction)
         {
-            this.eventStore = eventStore;
+            this.eventEmitter = eventEmitter;
             transaction.EnlistVolatile(this, EnlistmentOptions.None);
             changes = new List<UniqueEvent>();
             changesByReceipt = new Dictionary<Guid, UniqueEvent>();
@@ -73,7 +74,7 @@ namespace Honeycomb.Infrastructure
         {
             foreach (var @event in changes)
             {
-                eventStore.RecordEvent(@event.EventType, @event.UntypedEvent, @event.AffectedAggregates);
+                eventEmitter.Emit(@event.EventType, @event.UntypedEvent);
             }
         }
     }

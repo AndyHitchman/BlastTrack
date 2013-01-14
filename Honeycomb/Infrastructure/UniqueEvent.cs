@@ -1,8 +1,7 @@
-namespace Honeycomb
+namespace Honeycomb.Infrastructure
 {
     using System;
     using System.Collections.Generic;
-    using Infrastructure;
     using System.Linq;
 
     public class UniqueEvent

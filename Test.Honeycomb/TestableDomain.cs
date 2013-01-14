@@ -2,10 +2,11 @@
 {
     using global::Honeycomb;
     using global::Honeycomb.Infrastructure;
+    using global::Honeycomb.Plumbing;
 
     public class TestableDomain : Domain
     {
-        public TestableDomain(EventStore eventStore) : base(eventStore)
+        public TestableDomain(EventEmitter emitter, EventCollector collector, EventStore store) : base(emitter, collector, store)
         {
         }
 
@@ -14,9 +15,19 @@
             get { return base.AggregateTracker; }
         }
 
-        public new EventStore EventStore
+        public new EventEmitter Emitter
         {
-            get { return base.EventStore; }
+            get { return base.Emitter; }
+        }
+
+        public new EventCollector Collector
+        {
+            get { return base.Collector; }
+        }
+
+        public new EventStore Store
+        {
+            get { return base.Store; }
         }
 
         public new SelectorMap Selectors

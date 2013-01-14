@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using Infrastructure;
+    using Plumbing;
     using ReflectionMagic;
 
     public class Domain
@@ -12,16 +13,20 @@
         public static Domain Current;
 
         protected readonly AggregateTracker AggregateTracker = new AggregateTracker();
-        protected readonly EventStore EventStore;
+        protected readonly EventEmitter Emitter;
+        protected readonly EventCollector Collector;
+        protected readonly EventStore Store;
         protected readonly SelectorMap Selectors = new SelectorMap();
         protected readonly TransactionTracker TransactionTracker;
         protected readonly AggregateFactory AggregateFactory = new AggregateFactory();
 
-        public Domain(EventStore eventStore)
+        protected Domain(EventEmitter emitter, EventCollector collector, EventStore store)
         {
             Current = this;
-            EventStore = eventStore;
-            TransactionTracker = new TransactionTracker(eventStore);
+            Emitter = emitter;
+            Collector = collector;
+            Store = store;
+            TransactionTracker = new TransactionTracker(emitter);
         }
 
         public TransactionScope StartTransaction()
@@ -116,7 +121,7 @@
 
         private void selectAggregate(AggregateInfo aggregateInfo)
         {
-            var replayEvents = EventStore.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
+            var replayEvents = Store.EventsForAggregate(aggregateInfo.Type, aggregateInfo.Key);
             if (replayEvents.Any())
                 AggregateFactory.Buildup(aggregateInfo, replayEvents);
         }

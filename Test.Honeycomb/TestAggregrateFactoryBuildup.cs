@@ -14,7 +14,7 @@ namespace Test.Honeycomb
         [Test]
         public void events_raised_whilst_restoring_do_not_propogate()
         {
-            var domain = new TestableDomain(null);
+            var domain = new TestableDomain(null, null, null);
             domain.StartTransaction();
 
             var aggregateKey = "test";
@@ -33,7 +33,7 @@ namespace Test.Honeycomb
         [Test]
         public void it_should_buildup_the_aggregate_using_the_recorded_events()
         {
-            var domain = new TestableDomain(null);
+            var domain = new TestableDomain(null, null, null);
             domain.StartTransaction();
 
             var aggregateKey = "test";
@@ -54,7 +54,7 @@ namespace Test.Honeycomb
         [Test]
         public void it_should_construct_the_aggregate_using_the_first_event()
         {
-            var domain = new TestableDomain(null);
+            var domain = new TestableDomain(null, null, null);
             domain.StartTransaction();
 
             var aggregateKey = "test";
@@ -74,7 +74,7 @@ namespace Test.Honeycomb
         [Test]
         public void the_aggregate_content_should_report_live_for_the_instance_after_restore()
         {
-            var domain = new TestableDomain(null);
+            var domain = new TestableDomain(null, null, null);
             domain.StartTransaction();
 
             var aggregateKey = "test";
