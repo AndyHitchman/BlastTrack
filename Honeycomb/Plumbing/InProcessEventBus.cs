@@ -21,9 +21,9 @@
             cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public void Emit(RaisedEvent raisedEvent)
+        public void Emit(RaisedEvent @event)
         {
-            buffer.Enqueue(raisedEvent);
+            buffer.Enqueue(@event);
             nudge.Set();
         }
 
@@ -37,7 +37,7 @@
                             RaisedEvent @event;
                             if (buffer.TryDequeue(out @event))
                             {
-                                propogationDomain.Consume(new PendingEvent(@event));
+                                propogationDomain.Consume(@event);
                             }
                             else
                             {

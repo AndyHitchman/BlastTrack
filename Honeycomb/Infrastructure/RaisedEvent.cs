@@ -1,22 +1,13 @@
 namespace Honeycomb.Infrastructure
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Transactions;
 
     public class RaisedEvent
     {
-        public class ConsumptionRecord
-        {
-            public TimeSpan ExecutionTime { get; set; }
-            public Exception ConsumptionException { get; set; }
-        }
-
         public RaisedEvent(Event @event, string transactionId, DateTimeOffset raisedTimestamp)
         {
             TransactionId = transactionId;
-            UntypedEvent = @event;
+            Event = @event;
             RaisedTimestamp = raisedTimestamp;
             EventType = @event.GetType();
         }
@@ -29,7 +20,7 @@ namespace Honeycomb.Infrastructure
         /// <summary>
         ///   The event
         /// </summary>
-        public Event UntypedEvent { get; private set; }
+        public Event Event { get; private set; }
 
         /// <summary>
         ///   Type of the event

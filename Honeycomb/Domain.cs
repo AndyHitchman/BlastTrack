@@ -60,12 +60,16 @@
             }
         }
 
-        public virtual void Consume(PendingEvent pendingEvent)
+        public virtual void Consume(RaisedEvent raisedEvent)
         {
-            var applyToAggregates = applyTo(pendingEvent.Event).ToList();
+            var consumptionLogs = new List<ConsumptionLog>();
+            var applyToAggregates = applyTo(raisedEvent.Event).ToList();
 
             foreach (var aggregateInfo in applyToAggregates)
             {
+                var consumptionLog = new ConsumptionLog(raisedEvent.TransactionId, DateTimeOffset.UtcNow, aggregateInfo);
+                consumptionLogs.Add(consumptionLog);
+
                 //If it's not tracked, then select it from the domain.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
                     selectAggregate(aggregateInfo);
@@ -76,9 +80,9 @@
                     {
                         //If we haven't found it in the domain, then create it, otherwise consume the event.
                         if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                            AggregateFactory.Create(aggregateInfo, pendingEvent.Event);
+                            AggregateFactory.Create(aggregateInfo, raisedEvent.Event);
                         else
-                            aggregateInfo.Instance.AsDynamic().Receive(pendingEvent);
+                            aggregateInfo.Instance.AsDynamic().Receive(raisedEvent);
                     }
                     catch (ApplicationException e)
                     {
@@ -88,20 +92,20 @@
                                 string.Format(
                                     "{0}({1})",
                                     aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "_ctor" : "Receive",
-                                    pendingEvent.GetType()));
+                                    raisedEvent.GetType()));
 
                         throw;
                     }
                 }
                 catch (Exception e)
                 {
-                    pendingEvent.RecordConsumptionFailure(aggregateInfo, e);
+                    consumptionLog.RecordExceptionForConsumer(e);
                 }
-                finally
-                {
-                    pendingEvent.RecordConsumptionComplete(aggregateInfo);
-                }
+
+                consumptionLog.RecordConsumptionComplete();
             }
+
+            Store.RecordEvent(raisedEvent, consumptionLogs);
         }
 
         public virtual void Raise(Aggregate source, Event @event)

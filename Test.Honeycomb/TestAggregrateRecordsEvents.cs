@@ -35,7 +35,7 @@ namespace Test.Honeycomb
                 var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
                 recorded.Count().ShouldEqual(1);
                 recorded.First().EventType.ShouldEqual(typeof (DogRegistered));
-                recorded.First().UntypedEvent.ShouldBeType<DogRegistered>();
+                recorded.First().Event.ShouldBeType<DogRegistered>();
             }
         }
 
@@ -51,11 +51,10 @@ namespace Test.Honeycomb
                 var key = "test";
 
                 domain.Consume(
-                    new PendingEvent(
-                        new RaisedEvent(
-                            new DogRegistered(key, null), 
-                            Transaction.Current.TransactionInformation.LocalIdentifier, 
-                            DateTimeOffset.UtcNow)));
+                    new RaisedEvent(
+                        new DogRegistered(key, null),
+                        Transaction.Current.TransactionInformation.LocalIdentifier,
+                        DateTimeOffset.UtcNow));
 
                 var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
                 ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
@@ -64,7 +63,7 @@ namespace Test.Honeycomb
                 var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
                 recorded.Count().ShouldEqual(1);
                 recorded.First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
-                recorded.First().UntypedEvent.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
+                recorded.First().Event.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
             }
         }
 
@@ -87,7 +86,7 @@ namespace Test.Honeycomb
             }
 
 //            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered)));
-            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered) && ((DogRegistered)_.UntypedEvent).Earbrand == key));
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered) && ((DogRegistered)_.Event).Earbrand == key));
         }
     }
 }

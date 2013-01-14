@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.BlastTrack.Dogs", "Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Honeycomb", "Test.Honeycomb\Test.Honeycomb.csproj", "{38BA67F2-32F8-423D-82B3-341FB6C90DD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Honeycomb.Azure", "Honeycomb.Azure\Honeycomb.Azure.csproj", "{1AB33F3C-1130-4E0B-84CB-7689DD33062E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{38BA67F2-32F8-423D-82B3-341FB6C90DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38BA67F2-32F8-423D-82B3-341FB6C90DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38BA67F2-32F8-423D-82B3-341FB6C90DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AB33F3C-1130-4E0B-84CB-7689DD33062E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB33F3C-1130-4E0B-84CB-7689DD33062E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB33F3C-1130-4E0B-84CB-7689DD33062E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB33F3C-1130-4E0B-84CB-7689DD33062E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

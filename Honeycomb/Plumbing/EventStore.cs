@@ -7,6 +7,6 @@ namespace Honeycomb.Plumbing
     public interface EventStore
     {
         Event[] EventsForAggregate(Type aggregateType, object key);
-        void RecordEvent(Type eventType, Event untypedEvent, Dictionary<AggregateInfo, RaisedEvent.ConsumptionRecord> affectedAggregates);
+        void RecordEvent(RaisedEvent raisedEvent, IEnumerable<ConsumptionLog> consumptionLogs);
     }
 }

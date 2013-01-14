@@ -4,17 +4,17 @@ namespace Honeycomb.Infrastructure
 
     public class ConsumptionLog
     {
-        public ConsumptionLog(Guid eventReceipt, DateTimeOffset collectedTimestamp, AggregateInfo affectedAggregate)
+        public ConsumptionLog(string eventTransactionId, DateTimeOffset collectedTimestamp, AggregateInfo affectedAggregate)
         {
-            EventReceipt = eventReceipt;
+            EventTransactionId = eventTransactionId;
             CollectedTimestamp = collectedTimestamp;
             AffectedAggregate = affectedAggregate;
         }
 
         /// <summary>
-        ///   The unique identity of the event
+        ///   The unique transaction that raised the event
         /// </summary>
-        public Guid EventReceipt { get; private set; }
+        public string EventTransactionId { get; private set; }
 
         public DateTimeOffset CollectedTimestamp { get; private set; }
 
