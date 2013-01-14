@@ -87,7 +87,7 @@
                                 aggregateInfo.Type.FullName,
                                 string.Format(
                                     "{0}({1})",
-                                    aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "Receive" : "Accept",
+                                    aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "_ctor" : "Receive",
                                     pendingEvent.GetType()));
 
                         throw;
