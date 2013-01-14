@@ -18,4 +18,9 @@ namespace Honeycomb.Azure.EventBus
         Stream GetBody();
         T GetBody<T>();
     }
+
+    public interface InternalBrokeredMessage : BrokeredMessage
+    {
+        Microsoft.ServiceBus.Messaging.BrokeredMessage Real { get; }
+    }
 }

@@ -6,12 +6,12 @@
     using System.Linq;
     using System.Threading;
 
-    public static class Recover
+    public static class Retry
     {
         public delegate int Standoff(int attemptNumber);
         private static readonly Random variableStandoff = new Random();
 
-        public static void RetryTransaction(int attemptsAllowed, Standoff standoff, Func<Exception, bool> retry, Action doWork, Action<Exception> outOfRetries)
+        public static void Work(Action doWork, Func<Exception, bool> retryExceptions)
         {
             var tryCount = 0;
             do
@@ -27,8 +27,8 @@
                 }
                 catch (Exception e)
                 {
-                    if (tryCount > attemptsAllowed) throw;
-                    if (!retry(e)) throw;
+                    if (tryCount > 10) throw;
+                    if (!retryExceptions(e)) throw;
 
                     Thread.Sleep(standoff(tryCount));
                 }
@@ -39,7 +39,7 @@
         /// Standoff by trying again in 5..10s, 8..18s, 11..26s, etc, successively. 
         /// </summary>
         /// <value>Number of previous tries</value>
-        public static int VariableStandoff(int tryCount)
+        private static int standoff(int tryCount)
         {
             return 2000 + (variableStandoff.Next(3000, 8000) * tryCount);
         }

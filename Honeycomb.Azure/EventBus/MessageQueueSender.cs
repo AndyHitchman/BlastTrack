@@ -1,10 +1,11 @@
 namespace Honeycomb.Azure.EventBus
 {
     using System;
+    using System.ServiceModel;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
 
-    public class MessageQueueSender : IMessageSender
+    public class MessageQueueSender : MessageSender
     {
         private readonly QueueClient queueClient;
         private static readonly object createLock = new object();
@@ -34,9 +35,15 @@ namespace Honeycomb.Azure.EventBus
             }
         }
 
-        public void Send(Microsoft.ServiceBus.Messaging.BrokeredMessage message)
+        public void Send(BrokeredMessage message)
         {
-            queueClient.Send(message);
+            Retry.Work(
+                () => queueClient.Send(((InternalBrokeredMessage)message).Real),
+                e => e is CommunicationObjectFaultedException |
+                     e is CommunicationObjectAbortedException |
+                     e is MessagingCommunicationException |
+                     e is TimeoutException |
+                     e is ServerBusyException);
         }
     }
 }

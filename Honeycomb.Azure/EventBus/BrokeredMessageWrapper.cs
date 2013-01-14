@@ -4,7 +4,7 @@ namespace Honeycomb.Azure.EventBus
     using System.IO;
     using Microsoft.ServiceBus.Messaging;
 
-    public class BrokeredMessageWrapper : BrokeredMessage
+    public class BrokeredMessageWrapper : InternalBrokeredMessage
     {
         private readonly Microsoft.ServiceBus.Messaging.BrokeredMessage _;
 
@@ -43,5 +43,6 @@ namespace Honeycomb.Azure.EventBus
             return _.GetBody<T>();
         }
 
+        public Microsoft.ServiceBus.Messaging.BrokeredMessage Real { get { return _; } }
     }
 }

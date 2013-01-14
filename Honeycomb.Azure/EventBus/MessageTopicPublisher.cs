@@ -1,6 +1,7 @@
 namespace Honeycomb.Azure.EventBus
 {
     using System;
+    using System.ServiceModel;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
 
@@ -8,7 +9,7 @@ namespace Honeycomb.Azure.EventBus
     /// Domain events are published to a topic.
     /// </summary>
     /// <returns></returns>
-    public class MessageTopicPublisher : IMessageSender
+    public class MessageTopicPublisher : MessageSender
     {
         private readonly TopicClient topicClient;
         private static readonly object createLock = new object();
@@ -38,34 +39,15 @@ namespace Honeycomb.Azure.EventBus
             }
         }
 
-        public void Send(Microsoft.ServiceBus.Messaging.BrokeredMessage message)
+        public void Send(BrokeredMessage message)
         {
-            topicClient.Send(message);
+            Retry.Work(
+                () => topicClient.Send(((InternalBrokeredMessage)message).Real),
+                e => e is CommunicationObjectFaultedException |
+                     e is CommunicationObjectAbortedException |
+                     e is MessagingCommunicationException |
+                     e is TimeoutException |
+                     e is ServerBusyException);
         }
-
-//        public void SendBatch(IEnumerable<BrokeredMessage> message)
-//        {
-//            topicClient.SendBatch(message);
-//        }
-//
-//        public IAsyncResult BeginSend(BrokeredMessage message, AsyncCallback callback, object state)
-//        {
-//            return topicClient.BeginSend(message, callback, state);
-//        }
-//
-//        public void EndSend(IAsyncResult result)
-//        {
-//            topicClient.EndSend(result);
-//        }
-//
-//        public IAsyncResult BeginSendBatch(IEnumerable<BrokeredMessage> message, AsyncCallback callback, object state)
-//        {
-//            return topicClient.BeginSendBatch(message, callback, state);
-//        }
-//
-//        public void EndSendBatch(IAsyncResult result)
-//        {
-//            topicClient.EndSendBatch(result);
-//        }
     }
 }
