@@ -1,5 +1,6 @@
 namespace Honeycomb.Azure.EventBus
 {
+    using Honeycomb.Infrastructure;
     using Infrastructure;
     using Plumbing;
 
@@ -14,7 +15,7 @@ namespace Honeycomb.Azure.EventBus
 
         public void Emit(RaisedEvent @event)
         {
-            var msg = JsonEvent.ConvertEventToMessage(@event);
+            var msg = @event.ConvertEventToMessage();
             messageSender.Send(msg);
         }
     }

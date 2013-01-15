@@ -54,20 +54,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventBus\Infrastructure\BrokeredMessage.cs" />
+    <Compile Include="EventBus\Infrastructure\BrokeredMessageWrapper.cs" />
+    <Compile Include="EventBus\Infrastructure\ConsumerQueueClient.cs" />
+    <Compile Include="EventBus\Infrastructure\EventReceiverFactory.cs" />
+    <Compile Include="EventBus\Infrastructure\IMessageReceiver.cs" />
+    <Compile Include="EventBus\Infrastructure\MessageQueueSender.cs" />
+    <Compile Include="EventBus\Infrastructure\MessageSender.cs" />
+    <Compile Include="EventBus\Infrastructure\MessageTopicPublisher.cs" />
+    <Compile Include="EventBus\Infrastructure\QueueReceiver.cs" />
+    <Compile Include="EventBus\Infrastructure\SubscriptionReceiver.cs" />
     <Compile Include="PreservedMemoryStream.cs" />
     <Compile Include="Retry.cs" />
-    <Compile Include="EventBus\BrokeredMessageWrapper.cs" />
-    <Compile Include="EventBus\ConsumerQueueClient.cs" />
-    <Compile Include="EventBus\DomainEventReceiverFactory.cs" />
-    <Compile Include="EventBus\BrokeredMessage.cs" />
-    <Compile Include="EventBus\IMessageReceiver.cs" />
-    <Compile Include="EventBus\MessageSender.cs" />
-    <Compile Include="EventBus\MessageQueueSender.cs" />
-    <Compile Include="EventBus\MessageTopicPublisher.cs" />
-    <Compile Include="EventBus\QueueReceiver.cs" />
     <Compile Include="EventBus\ServiceBusCollector.cs" />
     <Compile Include="EventBus\ServiceBusEmitter.cs" />
-    <Compile Include="EventBus\SubscriptionReceiver.cs" />
     <Compile Include="JsonEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

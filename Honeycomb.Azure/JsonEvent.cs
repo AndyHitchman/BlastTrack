@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using EventBus;
+    using EventBus.Infrastructure;
     using Infrastructure;
     using Newtonsoft.Json;
 

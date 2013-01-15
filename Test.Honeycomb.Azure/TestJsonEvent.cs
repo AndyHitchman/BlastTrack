@@ -5,6 +5,7 @@
     using NUnit.Framework;
     using global::Honeycomb.Azure;
     using global::Honeycomb.Azure.EventBus;
+    using global::Honeycomb.Azure.EventBus.Infrastructure;
     using global::Honeycomb.Infrastructure;
     using Should;
 

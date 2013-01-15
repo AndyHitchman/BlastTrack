@@ -1,44 +1,48 @@
-namespace Honeycomb.Azure.EventBus
+namespace Honeycomb.Azure.EventBus.Infrastructure
 {
     using System;
     using System.ServiceModel;
     using Microsoft.ServiceBus;
     using Microsoft.ServiceBus.Messaging;
 
-    public class MessageQueueSender : MessageSender
+    /// <summary>
+    /// Domain events are published to a topic.
+    /// </summary>
+    /// <returns></returns>
+    public class MessageTopicPublisher : MessageSender
     {
-        private readonly QueueClient queueClient;
+        private readonly TopicClient topicClient;
         private static readonly object createLock = new object();
 
-        public MessageQueueSender(string connectionString, string serviceBusQueue)
+        public MessageTopicPublisher(string connectionString, string serviceBusTopic)
         {
-            ensureQueueExists(connectionString, serviceBusQueue);
+            ensureTopicExists(connectionString, serviceBusTopic);
 
-            queueClient = QueueClient.CreateFromConnectionString(connectionString, serviceBusQueue);
+            topicClient = TopicClient.CreateFromConnectionString(connectionString, serviceBusTopic);
         }
 
-        private static void ensureQueueExists(string connectionString, string serviceBusQueue)
+        private static void ensureTopicExists(string connectionString, string serviceBusTopic)
         {
             lock(createLock)
             {
                 var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-                if(nsMgr.QueueExists(serviceBusQueue)) 
+                if(nsMgr.TopicExists(serviceBusTopic)) 
                     return;
 
-                var definition = new QueueDescription(serviceBusQueue)
+                var definition = new TopicDescription(serviceBusTopic)
                     {
                         MaxSizeInMegabytes = 1024,
                         DefaultMessageTimeToLive = TimeSpan.FromDays(365)
                     };
 
-                nsMgr.CreateQueue(definition);
+                nsMgr.CreateTopic(definition);
             }
         }
 
         public void Send(BrokeredMessage message)
         {
             Retry.Work(
-                () => queueClient.Send(((InternalBrokeredMessage)message).Real),
+                () => topicClient.Send(((InternalBrokeredMessage)message).Real),
                 e => e is CommunicationObjectFaultedException |
                      e is CommunicationObjectAbortedException |
                      e is MessagingCommunicationException |

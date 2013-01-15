@@ -9,9 +9,11 @@ namespace Honeycomb.Azure.EventBus
     using System.ServiceModel;
     using System.Threading;
     using System.Threading.Tasks;
+    using Infrastructure;
     using Microsoft.ServiceBus.Messaging;
     using Newtonsoft.Json;
     using Plumbing;
+    using BrokeredMessage = Infrastructure.BrokeredMessage;
 
     public class ServiceBusCollector : EventCollector
     {
@@ -28,7 +30,7 @@ namespace Honeycomb.Azure.EventBus
             stopped = new ManualResetEventSlim(false);
         }
 
-        public static DomainEventReceiverFactory DefaultReceiverFactory(string sbConnectionString, string topicPath, string subscriberName)
+        public static EventReceiverFactory DefaultReceiverFactory(string sbConnectionString, string topicPath, string subscriberName)
         {
             return filter => new SubscriptionReceiver(sbConnectionString, topicPath, subscriberName, filter);
         }
@@ -98,7 +100,7 @@ namespace Honeycomb.Azure.EventBus
                                 throw;
                             }
 
-                            var raisedEvent = JsonEvent.ConvertMessageToEvent(message);
+                            var raisedEvent = message.ConvertMessageToEvent();
                             propogationDomain.Consume(raisedEvent);
                         }
                     },

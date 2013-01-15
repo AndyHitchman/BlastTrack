@@ -1,4 +1,4 @@
-namespace Honeycomb.Azure.EventBus
+namespace Honeycomb.Azure.EventBus.Infrastructure
 {
     using System;
 

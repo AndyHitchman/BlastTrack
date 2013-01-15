@@ -1,4 +1,4 @@
-namespace Honeycomb.Azure.EventBus
+namespace Honeycomb.Azure.EventBus.Infrastructure
 {
     using Microsoft.ServiceBus.Messaging;
 
@@ -6,5 +6,5 @@ namespace Honeycomb.Azure.EventBus
     /// We receive events by subscribing at different priorities to the domain event topic
     /// </summary>
     /// <returns></returns>
-    public delegate IMessageReceiver DomainEventReceiverFactory(SqlFilter sqlFilter);
+    public delegate IMessageReceiver EventReceiverFactory(SqlFilter sqlFilter);
 }
