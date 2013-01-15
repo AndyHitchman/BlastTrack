@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Transactions;
     using Infrastructure;
     using Plumbing;
@@ -38,7 +39,7 @@
             }
             catch (InvalidOperationException e)
             {
-                throw new InvalidOperationException("A command may only apply to a single aggregate instance", e);
+                throw new InvalidOperationException("A command must apply to a single aggregate instance", e);
             }
 
             //If it's not tracked, then select it from the domain.
@@ -71,16 +72,34 @@
         {
             var consumptionLogs = new List<ConsumptionLog>();
             var applyToAggregates = applyTo(raisedEvent.Event).ToList();
+            var consumerTasks = new List<Task>();
 
             foreach (var aggregateInfo in applyToAggregates)
             {
-                var consumptionLog = new ConsumptionLog(raisedEvent.TransactionId, DateTimeOffset.UtcNow, aggregateInfo);
+                var consumptionLog = new ConsumptionLog(raisedEvent, DateTimeOffset.UtcNow, aggregateInfo);
                 consumptionLogs.Add(consumptionLog);
 
-                //If it's not tracked, then select it from the domain.
-                if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                    selectAggregate(aggregateInfo);
+                var capturedAggregateInfo = aggregateInfo;
+                consumerTasks.Add(new Task(() => consumeEventOnAggregate(raisedEvent, capturedAggregateInfo, consumptionLog)));
+            }
 
+            //Store the event with the consumers that are to be called.
+            Store.RecordEvent(raisedEvent, consumptionLogs);
+
+            foreach (var task in consumerTasks)
+            {
+                task.Start();
+            }
+        }
+
+        private void consumeEventOnAggregate(RaisedEvent raisedEvent, AggregateInfo aggregateInfo, ConsumptionLog consumptionLog)
+        {
+            //If it's not tracked, then select it from the domain.
+            if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
+                selectAggregate(aggregateInfo);
+
+            using (var scope = new TransactionScope())
+            {
                 try
                 {
                     try
@@ -110,9 +129,10 @@
                 }
 
                 consumptionLog.RecordConsumptionComplete();
-            }
 
-            Store.RecordEvent(raisedEvent, consumptionLogs);
+                Store.UpdateConsumptionOutcome(consumptionLog);
+                scope.Complete();
+            }
         }
 
         public virtual void Raise(Aggregate source, Event @event)

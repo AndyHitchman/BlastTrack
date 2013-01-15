@@ -4,9 +4,9 @@ namespace Honeycomb.Infrastructure
 
     public class ConsumptionLog
     {
-        public ConsumptionLog(string eventTransactionId, DateTimeOffset collectedTimestamp, AggregateInfo affectedAggregate)
+        public ConsumptionLog(RaisedEvent @event, DateTimeOffset collectedTimestamp, AggregateInfo affectedAggregate)
         {
-            EventTransactionId = eventTransactionId;
+            EventThumbprint = @event.Thumbprint;
             CollectedTimestamp = collectedTimestamp;
             AffectedAggregate = affectedAggregate;
         }
@@ -14,7 +14,7 @@ namespace Honeycomb.Infrastructure
         /// <summary>
         ///   The unique transaction that raised the event
         /// </summary>
-        public string EventTransactionId { get; private set; }
+        public Guid EventThumbprint { get; private set; }
 
         public DateTimeOffset CollectedTimestamp { get; private set; }
 

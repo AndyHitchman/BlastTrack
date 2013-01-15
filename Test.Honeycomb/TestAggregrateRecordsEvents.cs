@@ -3,6 +3,7 @@ namespace Test.Honeycomb
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Transactions;
     using BlastTrack.Dogs;
     using NSubstitute;
@@ -42,28 +43,38 @@ namespace Test.Honeycomb
         [Test]
         public void events_raised_whilst_consuming_events_should_be_recorded()
         {
+            var waitForConsumption = new ManualResetEventSlim(false);
+            Transaction consumerTransaction = null;
+
             var eventStore = Substitute.For<EventStore>();
 
-            using (var ts = new TransactionScope())
-            {
-                var domain = new TestableDomain(null, null, eventStore);
+            //Because consumers run in background threads, we need to block until complete before we assert.
+            eventStore.When(_ => _.UpdateConsumptionOutcome(Arg.Any<ConsumptionLog>())).Do(info =>
+                {
+                    consumerTransaction = Transaction.Current;
+                    waitForConsumption.Set();
+                });
 
-                var key = "test";
+            var domain = new TestableDomain(null, null, eventStore);
 
-                domain.Consume(
-                    new RaisedEvent(
-                        new DogRegistered(key, null),
-                        DateTimeOffset.UtcNow));
+            var key = "test";
 
-                var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
-                ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
-                aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Live);
+            domain.Consume(
+                new RaisedEvent(
+                    new DogRegistered(key, null),
+                    DateTimeOffset.UtcNow));
 
-                var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
-                recorded.Count().ShouldEqual(1);
-                recorded.First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
-                recorded.First().Event.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
-            }
+            waitForConsumption.Wait();
+
+            var aggregateInfo = domain.AggregateTracker[typeof(Dog), key];
+
+            ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
+            aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Live);
+
+            var recorded = domain.TransactionTracker[consumerTransaction].RecordedEvents;
+            recorded.Count().ShouldEqual(1);
+            recorded.First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
+            recorded.First().Event.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
         }
 
         [Test]
