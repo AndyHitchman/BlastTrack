@@ -12,7 +12,7 @@
         private const string propEventType = "EventType";
         private const string propTransactionId = "TransactionId";
 
-        public static RaisedEvent ConvertMessageToEvent(BrokeredMessage message)
+        public static RaisedEvent ConvertMessageToEvent(this BrokeredMessage message)
         {
             var stream = message.GetBody();
             using (var reader = new StreamReader(stream))
@@ -21,7 +21,7 @@
             }
         }
 
-        public static BrokeredMessage ConvertEventToMessage(RaisedEvent @event)
+        public static BrokeredMessage ConvertEventToMessage(this RaisedEvent @event)
         {
             var stream = new PreservedMemoryStream();
             using (var streamWriter = new StreamWriter(stream))
@@ -29,7 +29,6 @@
             {
                 serialiser.Serialize(writer, @event);
                 writer.Flush();
-                stream.Position = 0;
             }
 
             var msg = new BrokeredMessageWrapper(new Microsoft.ServiceBus.Messaging.BrokeredMessage(stream, true));

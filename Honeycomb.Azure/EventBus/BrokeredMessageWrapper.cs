@@ -2,7 +2,6 @@ namespace Honeycomb.Azure.EventBus
 {
     using System.Collections.Generic;
     using System.IO;
-    using Microsoft.ServiceBus.Messaging;
 
     public class BrokeredMessageWrapper : InternalBrokeredMessage
     {
