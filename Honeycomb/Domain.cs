@@ -31,32 +31,39 @@
 
         public virtual void Apply(Command command)
         {
-            foreach (var aggregateInfo in applyTo(command))
+            AggregateInfo aggregateInfo;
+            try
             {
-                //If it's not tracked, then select it from the domain.
+                aggregateInfo = applyTo(command).Single();
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new InvalidOperationException("A command may only apply to a single aggregate instance", e);
+            }
+
+            //If it's not tracked, then select it from the domain.
+            if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
+                selectAggregate(aggregateInfo);
+
+            try
+            {
+                //If we haven't found it in the domain, then create it, otherwise apply the command.
                 if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                    selectAggregate(aggregateInfo);
+                    AggregateFactory.Create(aggregateInfo, command);
+                else
+                    aggregateInfo.Instance.AsDynamic().Apply(command);
+            }
+            catch (ApplicationException e)
+            {
+                if (e.Source == "ReflectionMagic")
+                    throw new MissingMethodException(
+                        aggregateInfo.Type.FullName,
+                        string.Format(
+                            "{0}({1})",
+                            aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "_ctor" : "Accept",
+                            command.GetType()));
 
-                try
-                {
-                    //If we haven't found it in the domain, then create it, otherwise apply the command.
-                    if (aggregateInfo.Lifestate == AggregateLifestate.Untracked)
-                        AggregateFactory.Create(aggregateInfo, command);
-                    else
-                        aggregateInfo.Instance.AsDynamic().Apply(command);
-                }
-                catch (ApplicationException e)
-                {
-                    if (e.Source == "ReflectionMagic")
-                        throw new MissingMethodException(
-                            aggregateInfo.Type.FullName,
-                            string.Format(
-                                "{0}({1})",
-                                aggregateInfo.Lifestate == AggregateLifestate.Untracked ? "_ctor" : "Accept",
-                                command.GetType()));
-
-                    throw;
-                }
+                throw;
             }
         }
 
