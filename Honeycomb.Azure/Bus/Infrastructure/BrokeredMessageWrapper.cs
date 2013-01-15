@@ -1,4 +1,4 @@
-namespace Honeycomb.Azure.EventBus.Infrastructure
+namespace Honeycomb.Azure.Bus.Infrastructure
 {
     using System.Collections.Generic;
     using System.IO;

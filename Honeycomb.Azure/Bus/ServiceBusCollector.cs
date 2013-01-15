@@ -1,18 +1,13 @@
-namespace Honeycomb.Azure.EventBus
+namespace Honeycomb.Azure.Bus
 {
     using System;
-    using System.Collections.Generic;
-    using System.Data;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using System.ServiceModel;
     using System.Threading;
     using System.Threading.Tasks;
     using Infrastructure;
     using Microsoft.ServiceBus.Messaging;
-    using Newtonsoft.Json;
-    using Plumbing;
+    using Honeycomb.Plumbing;
     using BrokeredMessage = Infrastructure.BrokeredMessage;
 
     public class ServiceBusCollector : EventCollector

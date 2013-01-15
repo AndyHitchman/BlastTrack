@@ -1,8 +1,8 @@
-namespace Honeycomb.Azure.EventBus
+namespace Honeycomb.Azure.Bus
 {
     using Honeycomb.Infrastructure;
+    using Honeycomb.Plumbing;
     using Infrastructure;
-    using Plumbing;
 
     public class ServiceBusEmitter : EventEmitter
     {

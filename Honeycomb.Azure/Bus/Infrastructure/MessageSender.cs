@@ -1,4 +1,4 @@
-namespace Honeycomb.Azure.EventBus.Infrastructure
+namespace Honeycomb.Azure.Bus.Infrastructure
 {
     /// <summary>
     /// Expose core message client functions to enable abstraction.

@@ -1,7 +1,7 @@
 #region License
 // Copyright (c) 2011 Greyhound Racing Victoria. All rights reserved.
 #endregion
-namespace Honeycomb.Azure.EventBus.Infrastructure
+namespace Honeycomb.Azure.Bus.Infrastructure
 {
     using System.Collections.Generic;
     using System.IO;

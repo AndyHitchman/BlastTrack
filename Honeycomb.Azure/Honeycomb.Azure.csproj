@@ -32,21 +32,36 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Data.Edm, Version=5.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Data.Edm.5.0.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Data.OData.5.0.2\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ServiceBus, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.ServiceBus.1.8.0.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.7.0.3\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.Storage.2.0.3.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Spatial, Version=5.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Spatial.5.0.2\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,21 +70,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventBus\Infrastructure\BrokeredMessage.cs" />
-    <Compile Include="EventBus\Infrastructure\BrokeredMessageWrapper.cs" />
-    <Compile Include="EventBus\Infrastructure\ConsumerQueueClient.cs" />
-    <Compile Include="EventBus\Infrastructure\EventReceiverFactory.cs" />
-    <Compile Include="EventBus\Infrastructure\IMessageReceiver.cs" />
-    <Compile Include="EventBus\Infrastructure\MessageQueueSender.cs" />
-    <Compile Include="EventBus\Infrastructure\MessageSender.cs" />
-    <Compile Include="EventBus\Infrastructure\MessageTopicPublisher.cs" />
-    <Compile Include="EventBus\Infrastructure\QueueReceiver.cs" />
-    <Compile Include="EventBus\Infrastructure\SerialisableRaisedEvent.cs" />
-    <Compile Include="EventBus\Infrastructure\SubscriptionReceiver.cs" />
+    <Compile Include="Bus\Infrastructure\BrokeredMessage.cs" />
+    <Compile Include="Bus\Infrastructure\BrokeredMessageWrapper.cs" />
+    <Compile Include="Bus\Infrastructure\ConsumerQueueClient.cs" />
+    <Compile Include="Bus\Infrastructure\EventReceiverFactory.cs" />
+    <Compile Include="Bus\Infrastructure\IMessageReceiver.cs" />
+    <Compile Include="Bus\Infrastructure\MessageQueueSender.cs" />
+    <Compile Include="Bus\Infrastructure\MessageSender.cs" />
+    <Compile Include="Bus\Infrastructure\MessageTopicPublisher.cs" />
+    <Compile Include="Bus\Infrastructure\QueueReceiver.cs" />
+    <Compile Include="Bus\Infrastructure\SerialisableRaisedEvent.cs" />
+    <Compile Include="Bus\Infrastructure\SubscriptionReceiver.cs" />
+    <Compile Include="Store\TableEventStore.cs" />
     <Compile Include="PreservedMemoryStream.cs" />
     <Compile Include="Retry.cs" />
-    <Compile Include="EventBus\ServiceBusCollector.cs" />
-    <Compile Include="EventBus\ServiceBusEmitter.cs" />
+    <Compile Include="Bus\ServiceBusCollector.cs" />
+    <Compile Include="Bus\ServiceBusEmitter.cs" />
     <Compile Include="JsonEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -77,9 +93,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="EventStore\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Honeycomb\Honeycomb.csproj">
       <Project>{72E33E9C-B72C-4630-9903-2E2E8C260015}</Project>
