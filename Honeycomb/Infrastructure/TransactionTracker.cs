@@ -8,17 +8,17 @@ namespace Honeycomb.Infrastructure
     {
         private readonly EventEmitter emitter;
 
-        private readonly ConditionalWeakTable<Transaction, AggregateResourceManager> resourceManagersForTransactions =
-            new ConditionalWeakTable<Transaction, AggregateResourceManager>();
+        private readonly ConditionalWeakTable<Transaction, EventResourceManager> resourceManagersForTransactions =
+            new ConditionalWeakTable<Transaction, EventResourceManager>();
 
         public TransactionTracker(EventEmitter emitter)
         {
             this.emitter = emitter;
         }
 
-        public AggregateResourceManager this[Transaction transaction]
+        public EventResourceManager this[Transaction transaction]
         {
-            get { return resourceManagersForTransactions.GetValue(transaction, key => new AggregateResourceManager(emitter, key)); }
+            get { return resourceManagersForTransactions.GetValue(transaction, key => new EventResourceManager(emitter, key)); }
         }
     }
 }

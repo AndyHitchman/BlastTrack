@@ -102,6 +102,7 @@ namespace Honeycomb.Azure.EventBus
 
                             var raisedEvent = message.ConvertMessageToEvent();
                             propogationDomain.Consume(raisedEvent);
+                            message.Complete();
                         }
                     },
                 TaskCreationOptions.LongRunning);

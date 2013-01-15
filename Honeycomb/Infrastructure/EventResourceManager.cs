@@ -5,13 +5,13 @@ namespace Honeycomb.Infrastructure
     using System.Transactions;
     using Plumbing;
 
-    public class AggregateResourceManager : ISinglePhaseNotification
+    public class EventResourceManager : ISinglePhaseNotification
     {
         private readonly EventEmitter eventEmitter;
         private readonly string transactionId;
         private readonly List<RaisedEvent> changes;
  
-        public AggregateResourceManager(EventEmitter eventEmitter, Transaction transaction)
+        public EventResourceManager(EventEmitter eventEmitter, Transaction transaction)
         {
             this.eventEmitter = eventEmitter;
             transactionId = transaction.TransactionInformation.LocalIdentifier;
