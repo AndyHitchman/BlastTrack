@@ -1,6 +1,5 @@
 namespace Honeycomb.Infrastructure
 {
-    using System;
     using System.Collections.Generic;
     using System.Transactions;
     using Plumbing;
@@ -8,13 +7,11 @@ namespace Honeycomb.Infrastructure
     public class EventResourceManager : ISinglePhaseNotification
     {
         private readonly EventEmitter eventEmitter;
-        private readonly string transactionId;
         private readonly List<RaisedEvent> changes;
  
         public EventResourceManager(EventEmitter eventEmitter, Transaction transaction)
         {
             this.eventEmitter = eventEmitter;
-            transactionId = transaction.TransactionInformation.LocalIdentifier;
             transaction.EnlistVolatile(this, EnlistmentOptions.None);
             changes = new List<RaisedEvent>();
         }
@@ -47,10 +44,9 @@ namespace Honeycomb.Infrastructure
             singlePhaseEnlistment.Committed();
         }
 
-        public void RecordEvent(Event @event)
+        public void RecordEvent(RaisedEvent @event)
         {
-            var ue = new RaisedEvent(@event, transactionId, DateTimeOffset.UtcNow);
-            changes.Add(ue);
+            changes.Add(@event);
         }
 
         public IEnumerable<RaisedEvent> RecordedEvents

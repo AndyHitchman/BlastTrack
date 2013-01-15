@@ -24,7 +24,7 @@ namespace Test.Honeycomb
 
             var expected = new DogRegistered("test", "wibble");
 
-            inProcessBus.Emit(new RaisedEvent(expected, null, DateTimeOffset.UtcNow));
+            inProcessBus.Emit(new RaisedEvent(expected, DateTimeOffset.UtcNow));
             inProcessBus.StartCollectingEvents(domain);
             inProcessBus.StopCollecting(() => domain.Received().Consume(Arg.Is<RaisedEvent>(_ => _.Event == expected)));
         }

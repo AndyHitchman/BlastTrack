@@ -46,6 +46,7 @@ namespace Honeycomb.Azure.EventBus.Infrastructure
                 e => e is CommunicationObjectFaultedException |
                      e is CommunicationObjectAbortedException |
                      e is MessagingCommunicationException |
+                     e is MessagingException |
                      e is TimeoutException |
                      e is ServerBusyException);
         }

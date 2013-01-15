@@ -63,6 +63,7 @@
     <Compile Include="EventBus\Infrastructure\MessageSender.cs" />
     <Compile Include="EventBus\Infrastructure\MessageTopicPublisher.cs" />
     <Compile Include="EventBus\Infrastructure\QueueReceiver.cs" />
+    <Compile Include="EventBus\Infrastructure\SerialisableRaisedEvent.cs" />
     <Compile Include="EventBus\Infrastructure\SubscriptionReceiver.cs" />
     <Compile Include="PreservedMemoryStream.cs" />
     <Compile Include="Retry.cs" />

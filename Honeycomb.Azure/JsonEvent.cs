@@ -9,7 +9,12 @@
 
     public static class JsonEvent
     {
-        private static readonly JsonSerializer serialiser = JsonSerializer.Create(new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Auto});
+        private static readonly JsonSerializer serialiser = 
+            JsonSerializer.Create(new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                });
         private const string propEventType = "EventType";
         private const string propTransactionId = "TransactionId";
 
@@ -18,7 +23,7 @@
             var stream = message.GetBody();
             using (var reader = new StreamReader(stream))
             {
-                return (RaisedEvent)serialiser.Deserialize(reader, typeof (RaisedEvent));
+                return (RaisedEvent)serialiser.Deserialize(reader, typeof (SerialisableRaisedEvent));
             }
         }
 

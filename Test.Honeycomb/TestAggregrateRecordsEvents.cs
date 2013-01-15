@@ -53,7 +53,6 @@ namespace Test.Honeycomb
                 domain.Consume(
                     new RaisedEvent(
                         new DogRegistered(key, null),
-                        Transaction.Current.TransactionInformation.LocalIdentifier,
                         DateTimeOffset.UtcNow));
 
                 var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];

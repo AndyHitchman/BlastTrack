@@ -112,7 +112,7 @@
         {
             if (source != null && AggregateTracker[source].Lifestate == AggregateLifestate.Building) return;
 
-            TransactionTracker[Transaction.Current].RecordEvent(@event);
+            TransactionTracker[Transaction.Current].RecordEvent(new RaisedEvent(@event, DateTimeOffset.UtcNow));
         }
 
         private void selectAggregate(AggregateInfo aggregateInfo)
