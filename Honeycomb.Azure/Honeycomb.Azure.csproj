@@ -84,6 +84,7 @@
     <Compile Include="Store\AggregateEventEntity.cs" />
     <Compile Include="Store\EventEntity.cs" />
     <Compile Include="Store\EventStamp.cs" />
+    <Compile Include="Store\EventStoreException.cs" />
     <Compile Include="Store\TableEventStore.cs" />
     <Compile Include="PreservedMemoryStream.cs" />
     <Compile Include="Retry.cs" />

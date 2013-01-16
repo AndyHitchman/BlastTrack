@@ -8,6 +8,7 @@
     using Microsoft.WindowsAzure.Storage.RetryPolicies;
     using Microsoft.WindowsAzure.Storage.Table;
     using Plumbing;
+    using System.Linq;
 
     public class TableEventStore : EventStore
     {
@@ -40,18 +41,32 @@
             var insertEvent = TableOperation.Insert(eventEntity);
             var insertedEvent = Task.Factory.FromAsync<TableOperation, TableResult>(eventSteamTable.BeginExecute, eventSteamTable.EndExecute, insertEvent, null);
 
-            var insertedAggregates = new List<Task<TableResult>>();
+            var insertedAggregates = new Dictionary<Task<TableResult>, AggregateEventEntity>();
 
             foreach (var consumptionLog in consumptionLogs)
             {
                 var aggregateEventEntity = new AggregateEventEntity(consumptionLog, raisedEvent);
                 var insertAggregateEvent = TableOperation.Insert(aggregateEventEntity);
                 insertedAggregates.Add(
-                    Task.Factory.FromAsync<TableOperation, TableResult>(aggregateEventTable.BeginExecute, aggregateEventTable.EndExecute, insertAggregateEvent, null));
-                }
+                    Task.Factory.FromAsync<TableOperation, TableResult>(aggregateEventTable.BeginExecute, aggregateEventTable.EndExecute, insertAggregateEvent, null),
+                    aggregateEventEntity);
+            }
 
+            var storeResult = await insertedEvent;
+            if (storeResult.HttpStatusCode != 201)
+            {
+                throw new EventStoreException(string.Format("Could not insert event {0}/{1} into Azure table store",
+                                                            eventEntity.PartitionKey, eventEntity.RowKey));
+            }
 
-            var result = await insertedEvent;
+            var aggregateResults = await Task.WhenAll(insertedAggregates.Keys);
+            var aggregateResult = aggregateResults.FirstOrDefault(_ => _.HttpStatusCode != 201);
+            if (aggregateResult != null)
+            {
+                var failedEntity = insertedAggregates.Single(_ => _.Key.Result == aggregateResult).Value;
+                throw new EventStoreException(string.Format("Could not insert aggregate consumption log {0}/{1} into Azure table store",
+                                                            failedEntity.PartitionKey, failedEntity.RowKey));
+            }
         }
 
         public void UpdateConsumptionOutcome(ConsumptionLog consumptionLog)
