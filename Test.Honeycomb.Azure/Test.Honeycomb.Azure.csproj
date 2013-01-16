@@ -76,7 +76,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestEvent.cs" />
+    <Compile Include="DummyEvent.cs" />
+    <Compile Include="TestEventEntity.cs" />
     <Compile Include="TestJsonEvent.cs" />
   </ItemGroup>
   <ItemGroup>

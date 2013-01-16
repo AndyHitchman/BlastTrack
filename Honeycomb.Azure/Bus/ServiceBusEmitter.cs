@@ -15,7 +15,7 @@ namespace Honeycomb.Azure.Bus
 
         public void Emit(RaisedEvent @event)
         {
-            var msg = @event.ConvertEventToMessage();
+            var msg = @event.ConvertToMessage();
             messageSender.Send(msg);
         }
     }

@@ -79,8 +79,11 @@
     <Compile Include="Bus\Infrastructure\MessageSender.cs" />
     <Compile Include="Bus\Infrastructure\MessageTopicPublisher.cs" />
     <Compile Include="Bus\Infrastructure\QueueReceiver.cs" />
-    <Compile Include="Bus\Infrastructure\SerialisableRaisedEvent.cs" />
     <Compile Include="Bus\Infrastructure\SubscriptionReceiver.cs" />
+    <Compile Include="SerialisableRaisedEvent.cs" />
+    <Compile Include="Store\AggregateEventEntity.cs" />
+    <Compile Include="Store\EventEntity.cs" />
+    <Compile Include="Store\EventStamp.cs" />
     <Compile Include="Store\TableEventStore.cs" />
     <Compile Include="PreservedMemoryStream.cs" />
     <Compile Include="Retry.cs" />

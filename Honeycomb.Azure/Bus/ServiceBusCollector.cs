@@ -95,7 +95,7 @@ namespace Honeycomb.Azure.Bus
                                 throw;
                             }
 
-                            var raisedEvent = message.ConvertMessageToEvent();
+                            var raisedEvent = message.ConvertToEvent();
                             propogationDomain.Consume(raisedEvent);
                             message.Complete();
                         }

@@ -7,7 +7,7 @@ namespace Honeycomb.Infrastructure
         public ConsumptionLog(RaisedEvent @event, DateTimeOffset collectedTimestamp, AggregateInfo affectedAggregate)
         {
             EventThumbprint = @event.Thumbprint;
-            CollectedTimestamp = collectedTimestamp;
+            ConsumedTimestamp = collectedTimestamp;
             AffectedAggregate = affectedAggregate;
         }
 
@@ -16,7 +16,7 @@ namespace Honeycomb.Infrastructure
         /// </summary>
         public Guid EventThumbprint { get; private set; }
 
-        public DateTimeOffset CollectedTimestamp { get; private set; }
+        public DateTimeOffset ConsumedTimestamp { get; private set; }
 
         public AggregateInfo AffectedAggregate { get; private set; }
 
@@ -40,7 +40,7 @@ namespace Honeycomb.Infrastructure
         /// <param name="aggregateInfo"></param>
         public void RecordConsumptionComplete()
         {
-            ExecutionTime = DateTimeOffset.UtcNow.Subtract(CollectedTimestamp);
+            ExecutionTime = DateTimeOffset.UtcNow.Subtract(ConsumedTimestamp);
         }
     }
 }

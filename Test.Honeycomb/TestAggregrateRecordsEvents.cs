@@ -35,7 +35,6 @@ namespace Test.Honeycomb
 
                 var recorded = domain.TransactionTracker[Transaction.Current].RecordedEvents;
                 recorded.Count().ShouldEqual(1);
-                recorded.First().EventType.ShouldEqual(typeof (DogRegistered));
                 recorded.First().Event.ShouldBeType<DogRegistered>();
             }
         }
@@ -73,7 +72,6 @@ namespace Test.Honeycomb
 
             var recorded = domain.TransactionTracker[consumerTransaction].RecordedEvents;
             recorded.Count().ShouldEqual(1);
-            recorded.First().EventType.ShouldEqual(typeof (DogRequiresVaccinationWithin12Weeks));
             recorded.First().Event.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
         }
 
@@ -96,7 +94,7 @@ namespace Test.Honeycomb
             }
 
 //            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered)));
-            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered) && ((DogRegistered)_.Event).Earbrand == key));
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRegistered)_.Event).Earbrand == key));
         }
     }
 }

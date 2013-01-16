@@ -2,7 +2,7 @@ namespace Test.Honeycomb.Azure
 {
     using global::Honeycomb;
 
-    public class TestEvent : Event
+    public class DummyEvent : Event
     {
         public string Prop { get; set; }
     }
