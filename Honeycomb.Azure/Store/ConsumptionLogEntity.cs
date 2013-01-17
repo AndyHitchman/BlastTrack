@@ -4,25 +4,25 @@
     using Infrastructure;
     using Microsoft.WindowsAzure.Storage.Table;
 
-    public class AggregateEventEntity : TableEntity
+    public class ConsumptionLogEntity : TableEntity
     {
         private const string longPad = "0000000000000000000";
 
         /// <summary>
         /// For Storage API.
         /// </summary>
-        public AggregateEventEntity()
+        public ConsumptionLogEntity()
         {
         }
 
-        public AggregateEventEntity(ConsumptionLog consumptionLog, RaisedEvent raisedEvent)
+        public ConsumptionLogEntity(ConsumptionLog consumptionLog, RaisedEvent raisedEvent)
         {
-            PartitionKey = consumptionLog.AffectedAggregate.Type.FullName + "/" + consumptionLog.AffectedAggregate.Key;
+            PartitionKey = consumptionLog.AffectedAggregate.Type.FullName + "@" + consumptionLog.AffectedAggregate.Key;
             RowKey = consumptionLog.ConsumedTimestamp.Ticks.ToString(longPad);
             EventThumbprint = raisedEvent.Thumbprint;
             ConsumedTimestamp = consumptionLog.ConsumedTimestamp;
             ExecutionTime = consumptionLog.ExecutionTime;
-            ConsumptionExceitpion = consumptionLog.ConsumptionException;
+            ConsumptionException = consumptionLog.ConsumptionException;
             Event = JsonEvent.ConvertToJson(raisedEvent);
         }
 
@@ -32,9 +32,9 @@
 
         public DateTimeOffset ConsumedTimestamp { get; set; }
 
-        public TimeSpan ExecutionTime { get; private set; }
+        public TimeSpan ExecutionTime { get; set; }
         
-        public Exception ConsumptionExceitpion { get; set; }
+        public Exception ConsumptionException { get; set; }
 
         public string Event { get; set; }
 

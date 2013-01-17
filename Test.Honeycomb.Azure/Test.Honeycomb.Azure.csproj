@@ -75,10 +75,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureEmulator.cs" />
+    <Compile Include="DummyAggregate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DummyEvent.cs" />
     <Compile Include="TestEventEntity.cs" />
     <Compile Include="TestJsonEvent.cs" />
+    <Compile Include="TestTableEventStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Honeycomb.Azure\Honeycomb.Azure.csproj">
