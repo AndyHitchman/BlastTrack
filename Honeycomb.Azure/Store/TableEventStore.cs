@@ -15,7 +15,7 @@
         private readonly CloudStorageAccount cloudStorageAccount;
         private readonly string domainPrefix;
         private readonly CloudTableClient cloudTableClient;
-        private readonly CloudTable eventStoreTable;
+        public readonly CloudTable EventStoreTable;
         private readonly CloudTable logTable;
 
         public TableEventStore(CloudStorageAccount cloudStorageAccount, string domainPrefix)
@@ -24,8 +24,8 @@
             this.domainPrefix = domainPrefix;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
             cloudTableClient.RetryPolicy = new ExponentialRetry(TimeSpan.FromMilliseconds(100), 20);
-            eventStoreTable = cloudTableClient.GetTableReference(domainPrefix + "EventStore");
-            eventStoreTable.CreateIfNotExists();
+            EventStoreTable = cloudTableClient.GetTableReference(domainPrefix + "EventStore");
+            EventStoreTable.CreateIfNotExists();
             logTable = cloudTableClient.GetTableReference(domainPrefix + "ConsumptionLog");
             logTable.CreateIfNotExists();
         }
@@ -35,34 +35,20 @@
             throw new NotImplementedException();
         }
 
-        public async void RecordEvent(RaisedEvent raisedEvent, IEnumerable<ConsumptionLog> consumptionLogs)
-        {
-            await Task.WhenAll(
-                InsertEvent(raisedEvent),
-                InsertConsumptionLogs(raisedEvent, consumptionLogs));
-        }
-
-        public async Task InsertEvent(RaisedEvent raisedEvent)
+        public async void RecordEvent(RaisedEvent raisedEvent)
         {
             var eventEntity = new EventEntity(raisedEvent);
             var insert = TableOperation.Insert(eventEntity);
-            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(eventStoreTable.BeginExecute, eventStoreTable.EndExecute, insert, null);
+            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(EventStoreTable.BeginExecute, EventStoreTable.EndExecute, insert, null);
             await inserted;
         }
 
-        public async Task InsertConsumptionLogs(RaisedEvent raisedEvent, IEnumerable<ConsumptionLog> consumptionLogs)
+        public async void LogConsumption(RaisedEvent raisedEvent, ConsumptionLog consumptionLog)
         {
-            var inserted =
-                consumptionLogs.Select(log => new ConsumptionLogEntity(log, raisedEvent))
-                               .Select(logEntity => TableOperation.Insert(logEntity))
-                               .Select(insert => Task.Factory.FromAsync<TableOperation, TableResult>(logTable.BeginExecute, logTable.EndExecute, insert, null));
-
-            await Task.WhenAll(inserted);
-        }
-
-        public void UpdateConsumptionOutcome(ConsumptionLog consumptionLog)
-        {
-            throw new NotImplementedException();
+            var logEntity = new ConsumptionLogEntity(consumptionLog, raisedEvent);
+            var insert = TableOperation.Insert(logEntity);
+            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(logTable.BeginExecute, logTable.EndExecute, insert, null);
+            await inserted;
         }
     }
 }

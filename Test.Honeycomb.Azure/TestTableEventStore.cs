@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.RetryPolicies;
     using Microsoft.WindowsAzure.Storage.Table;
@@ -34,7 +35,10 @@
                 new DateTimeOffset(2013, 01, 17, 12, 06, 39, 967, TimeZoneInfo.Utc.BaseUtcOffset),
                 "txid");
 
-            await subject.InsertEvent(expected);
+            var eventEntity = new EventEntity(expected);
+            var insert = TableOperation.Insert(eventEntity);
+            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(subject.EventStoreTable.BeginExecute, subject.EventStoreTable.EndExecute, insert, null);
+            await inserted;
 
             var actual = storedEventEntity(expected);
 
@@ -57,33 +61,20 @@
                 new DateTimeOffset(2013, 01, 17, 12, 06, 39, 967, TimeZoneInfo.Utc.BaseUtcOffset),
                 "txid");
 
-            var expectedConsumptionLog1 = new ConsumptionLog(
+            var expectedConsumptionLog = new ConsumptionLog(
                 expectedEvent,
                 expectedEvent.RaisedTimestamp.AddSeconds(1),
                 new AggregateInfo(typeof(DummyAggregate), 123));
 
-            var expectedConsumptionLog2 = new ConsumptionLog(
-                expectedEvent,
-                expectedEvent.RaisedTimestamp.AddSeconds(2),
-                new AggregateInfo(typeof(DummyAggregate), 456));
+            subject.LogConsumption(expectedEvent, expectedConsumptionLog);
 
-            await subject.InsertConsumptionLogs(expectedEvent, new[] {expectedConsumptionLog1, expectedConsumptionLog2});
+            var actual = storedConsumptionLogEntity(expectedConsumptionLog);
 
-            var actual1 = storedConsumptionLogEntity(expectedConsumptionLog1);
-            var actual2 = storedConsumptionLogEntity(expectedConsumptionLog2);
-
-            actual1.ShouldNotBeNull();
-            actual1.ConsumedTimestamp.ShouldEqual(expectedConsumptionLog1.ConsumedTimestamp);
-            actual1.ConsumptionException.ShouldEqual(expectedConsumptionLog1.ConsumptionException);
-            actual1.Event.ShouldEqual(JsonEvent.ConvertToJson(expectedEvent));
-            actual1.EventThumbprint.ShouldEqual(expectedConsumptionLog1.EventThumbprint);
-
-            actual2.ShouldNotBeNull();
-            actual2.ConsumedTimestamp.ShouldEqual(expectedConsumptionLog2.ConsumedTimestamp);
-            actual2.ConsumptionException.ShouldEqual(expectedConsumptionLog2.ConsumptionException);
-            actual2.Event.ShouldEqual(JsonEvent.ConvertToJson(expectedEvent));
-            actual2.EventThumbprint.ShouldEqual(expectedConsumptionLog2.EventThumbprint);
-
+            actual.ShouldNotBeNull();
+            actual.ConsumedTimestamp.ShouldEqual(expectedConsumptionLog.ConsumedTimestamp);
+            actual.ConsumptionException.ShouldEqual(expectedConsumptionLog.ConsumptionException);
+            actual.Event.ShouldEqual(JsonEvent.ConvertToJson(expectedEvent));
+            actual.EventThumbprint.ShouldEqual(expectedConsumptionLog.EventThumbprint);
         }
 
         private void deleteEventStoreTable()

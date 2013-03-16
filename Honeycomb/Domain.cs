@@ -84,7 +84,7 @@
             }
 
             //Store the event with the consumers that are to be called.
-            Store.RecordEvent(raisedEvent, consumptionLogs);
+            Store.RecordEvent(raisedEvent);
 
             foreach (var task in consumerTasks)
             {
@@ -130,7 +130,7 @@
 
                 consumptionLog.RecordConsumptionComplete();
 
-                Store.UpdateConsumptionOutcome(consumptionLog);
+                Store.LogConsumption(raisedEvent, consumptionLog);
                 scope.Complete();
             }
         }

@@ -18,16 +18,15 @@ namespace Honeycomb.Infrastructure
             {
                 var messageType = message.GetType();
 
-                foreach (
-                    var assembly in
-                        AppDomain.CurrentDomain.GetAssemblies().Where(
-                            assembly => !selectorsForAssembly.ContainsKey(assembly)))
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => !selectorsForAssembly.ContainsKey(assembly)))
+                {
                     selectorsForAssembly[assembly] =
                         assembly
                             .GetTypes()
                             .Where(type => type.IsClass)
                             .Where(possibleSelector => typeof (SelectKeyForAggregate).IsAssignableFrom(possibleSelector))
                             .ToArray();
+                }
 
                 if (!selectorsForMessage.ContainsKey(messageType))
                 {
@@ -39,11 +38,12 @@ namespace Honeycomb.Infrastructure
                                 new
                                     {
                                         PossibleSelectorType = possibleSelectorType,
-                                        Selectors = possibleSelectorType
-                                    .GetInterfaces()
-                                    .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
-                                    .Where(selector => selector != typeof (SelectKeyForAggregate))
-                                    .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
+                                        Selectors =
+                                            possibleSelectorType
+                                                .GetInterfaces()
+                                                .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
+                                                .Where(selector => selector != typeof (SelectKeyForAggregate))
+                                                .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
                                     })
                             .Where(possibleSelectors => possibleSelectors.Selectors.Any())
                             .SelectMany(

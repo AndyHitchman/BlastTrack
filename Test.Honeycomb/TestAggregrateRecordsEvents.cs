@@ -48,7 +48,7 @@ namespace Test.Honeycomb
             var eventStore = Substitute.For<EventStore>();
 
             //Because consumers run in background threads, we need to block until complete before we assert.
-            eventStore.When(_ => _.UpdateConsumptionOutcome(Arg.Any<ConsumptionLog>())).Do(info =>
+            eventStore.When(_ => _.LogConsumption(Arg.Any<RaisedEvent>(), Arg.Any<ConsumptionLog>())).Do(info =>
                 {
                     consumerTransaction = Transaction.Current;
                     waitForConsumption.Set();
@@ -76,6 +76,37 @@ namespace Test.Honeycomb
         }
 
         [Test]
+        public void events_raised_whilst_consuming_events_should_be_emitted()
+        {
+            //Ensure assemblies are loaded.
+            DogSelector s;
+
+            var waitForConsumption = new ManualResetEventSlim(false);
+
+            var eventEmitter = Substitute.For<EventEmitter>();
+            var eventStore = Substitute.For<EventStore>();
+
+            //Because consumers run in background threads, we need to block until complete before we assert.
+            eventStore.When(_ => _.LogConsumption(Arg.Any<RaisedEvent>(), Arg.Any<ConsumptionLog>())).Do(info =>
+            {
+                waitForConsumption.Set();
+            });
+
+            var domain = new TestableDomain(eventEmitter, null, eventStore);
+
+            var key = "test";
+
+            domain.Consume(
+                new RaisedEvent(
+                    new DogRegistered(key, null),
+                    DateTimeOffset.UtcNow));
+
+            waitForConsumption.Wait();
+
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRequiresVaccinationWithin12Weeks)_.Event).Earbrand == key));
+        }
+
+        [Test]
         public void events_raised_whilst_handling_commands_should_be_emitted()
         {
             var eventEmitter = Substitute.For<EventEmitter>();
@@ -93,7 +124,6 @@ namespace Test.Honeycomb
                 ts.Complete();
             }
 
-//            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => _.EventType == typeof(DogRegistered)));
             eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRegistered)_.Event).Earbrand == key));
         }
     }
