@@ -18,18 +18,18 @@ namespace Honeycomb.Infrastructure
             {
                 var messageType = message.GetType();
 
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => !selectorsForAssembly.ContainsKey(assembly)))
-                {
-                    selectorsForAssembly[assembly] =
-                        assembly
-                            .GetTypes()
-                            .Where(type => type.IsClass)
-                            .Where(possibleSelector => typeof (SelectKeyForAggregate).IsAssignableFrom(possibleSelector))
-                            .ToArray();
-                }
-
                 if (!selectorsForMessage.ContainsKey(messageType))
                 {
+                    foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => !selectorsForAssembly.ContainsKey(assembly)))
+                    {
+                        selectorsForAssembly[assembly] =
+                            assembly
+                                .GetTypes()
+                                .Where(type => type.IsClass)
+                                .Where(possibleSelector => typeof(SelectKeyForAggregate).IsAssignableFrom(possibleSelector))
+                                .ToArray();
+                    }
+
                     selectorsForMessage[messageType] =
                         selectorsForAssembly
                             .SelectMany(_ => _.Value)
