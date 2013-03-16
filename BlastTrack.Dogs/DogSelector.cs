@@ -1,5 +1,6 @@
 namespace BlastTrack.Dogs
 {
+    using Commands;
     using Honeycomb;
 
     public class DogSelector :

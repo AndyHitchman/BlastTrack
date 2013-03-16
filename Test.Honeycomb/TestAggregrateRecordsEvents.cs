@@ -6,6 +6,7 @@ namespace Test.Honeycomb
     using System.Threading;
     using System.Transactions;
     using BlastTrack.Dogs;
+    using BlastTrack.Dogs.Commands;
     using NSubstitute;
     using NUnit.Framework;
     using ReflectionMagic;

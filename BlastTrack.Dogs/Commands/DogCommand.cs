@@ -1,4 +1,4 @@
-namespace BlastTrack.Dogs
+namespace BlastTrack.Dogs.Commands
 {
     using Honeycomb;
 

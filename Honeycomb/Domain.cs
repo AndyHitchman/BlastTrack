@@ -70,20 +70,17 @@
 
         public virtual void Consume(RaisedEvent raisedEvent)
         {
-            var consumptionLogs = new List<ConsumptionLog>();
             var applyToAggregates = applyTo(raisedEvent.Event).ToList();
             var consumerTasks = new List<Task>();
 
             foreach (var aggregateInfo in applyToAggregates)
             {
                 var consumptionLog = new ConsumptionLog(raisedEvent, DateTimeOffset.UtcNow, aggregateInfo);
-                consumptionLogs.Add(consumptionLog);
-
                 var capturedAggregateInfo = aggregateInfo;
                 consumerTasks.Add(new Task(() => consumeEventOnAggregate(raisedEvent, capturedAggregateInfo, consumptionLog)));
             }
 
-            //Store the event with the consumers that are to be called.
+            //Store the event.
             Store.RecordEvent(raisedEvent);
 
             foreach (var task in consumerTasks)
