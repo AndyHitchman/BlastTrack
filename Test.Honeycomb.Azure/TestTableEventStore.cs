@@ -1,17 +1,14 @@
 ﻿namespace Test.Honeycomb.Azure
 {
     using System;
-    using System.Diagnostics;
     using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.RetryPolicies;
     using Microsoft.WindowsAzure.Storage.Table;
     using NUnit.Framework;
-    using global::Honeycomb;
+    using Should;
     using global::Honeycomb.Azure;
     using global::Honeycomb.Azure.Store;
     using global::Honeycomb.Infrastructure;
-    using Should;
 
     [TestFixture]
     public class TestTableEventStore
@@ -37,7 +34,8 @@
 
             var eventEntity = new EventEntity(expected);
             var insert = TableOperation.Insert(eventEntity);
-            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(subject.EventStoreTable.BeginExecute, subject.EventStoreTable.EndExecute, insert, null);
+            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(subject.EventStoreTable.BeginExecute,
+                                                                               subject.EventStoreTable.EndExecute, insert, null);
             await inserted;
 
             var actual = storedEventEntity(expected);
@@ -54,7 +52,7 @@
             deleteConsumptionLogTable();
 
             var subject = new TableEventStore(CloudStorageAccount.DevelopmentStorageAccount, "test");
-            
+
             var expectedEvent = new RaisedEvent(
                 Guid.NewGuid(),
                 new DummyEvent {Prop = "Property"},
@@ -64,7 +62,7 @@
             var expectedConsumptionLog = new ConsumptionLog(
                 expectedEvent,
                 expectedEvent.RaisedTimestamp.AddSeconds(1),
-                new AggregateInfo(typeof(DummyAggregate), 123));
+                new AggregateInfo(typeof (DummyAggregate), 123));
 
             subject.LogConsumption(expectedEvent, expectedConsumptionLog);
 

@@ -1,14 +1,12 @@
 ﻿namespace Honeycomb.Azure.Store
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Infrastructure;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.RetryPolicies;
     using Microsoft.WindowsAzure.Storage.Table;
     using Plumbing;
-    using System.Linq;
 
     public class TableEventStore : EventStore
     {
@@ -39,7 +37,8 @@
         {
             var eventEntity = new EventEntity(raisedEvent);
             var insert = TableOperation.Insert(eventEntity);
-            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(EventStoreTable.BeginExecute, EventStoreTable.EndExecute, insert, null);
+            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(EventStoreTable.BeginExecute, EventStoreTable.EndExecute,
+                                                                               insert, null);
             await inserted;
         }
 

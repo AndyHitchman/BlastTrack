@@ -1,7 +1,6 @@
 namespace Honeycomb.Plumbing
 {
     using System;
-    using System.Collections.Generic;
     using Infrastructure;
 
     public interface EventStore

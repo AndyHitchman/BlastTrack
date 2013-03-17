@@ -1,7 +1,6 @@
 namespace Test.Honeycomb
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Transactions;
@@ -11,7 +10,6 @@ namespace Test.Honeycomb
     using NUnit.Framework;
     using ReflectionMagic;
     using Should;
-    using global::Honeycomb;
     using global::Honeycomb.Infrastructure;
     using global::Honeycomb.Plumbing;
 
@@ -50,10 +48,11 @@ namespace Test.Honeycomb
 
             //Because consumers run in background threads, we need to block until complete before we assert.
             eventStore.When(_ => _.LogConsumption(Arg.Any<RaisedEvent>(), Arg.Any<ConsumptionLog>())).Do(info =>
-                {
-                    consumerTransaction = Transaction.Current;
-                    waitForConsumption.Set();
-                });
+                                                                                                             {
+                                                                                                                 consumerTransaction =
+                                                                                                                     Transaction.Current;
+                                                                                                                 waitForConsumption.Set();
+                                                                                                             });
 
             var domain = new TestableDomain(null, null, eventStore);
 
@@ -66,7 +65,7 @@ namespace Test.Honeycomb
 
             waitForConsumption.Wait();
 
-            var aggregateInfo = domain.AggregateTracker[typeof(Dog), key];
+            var aggregateInfo = domain.AggregateTracker[typeof (Dog), key];
 
             ((string) aggregateInfo.Instance.AsDynamic().earbrand).ShouldEqual(key);
             aggregateInfo.Lifestate.ShouldEqual(AggregateLifestate.Live);
@@ -88,10 +87,8 @@ namespace Test.Honeycomb
             var eventStore = Substitute.For<EventStore>();
 
             //Because consumers run in background threads, we need to block until complete before we assert.
-            eventStore.When(_ => _.LogConsumption(Arg.Any<RaisedEvent>(), Arg.Any<ConsumptionLog>())).Do(info =>
-            {
-                waitForConsumption.Set();
-            });
+            eventStore.When(_ => _.LogConsumption(Arg.Any<RaisedEvent>(), Arg.Any<ConsumptionLog>())).Do(
+                info => { waitForConsumption.Set(); });
 
             var domain = new TestableDomain(eventEmitter, null, eventStore);
 
@@ -104,7 +101,7 @@ namespace Test.Honeycomb
 
             waitForConsumption.Wait();
 
-            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRequiresVaccinationWithin12Weeks)_.Event).Earbrand == key));
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRequiresVaccinationWithin12Weeks) _.Event).Earbrand == key));
         }
 
         [Test]
@@ -125,7 +122,7 @@ namespace Test.Honeycomb
                 ts.Complete();
             }
 
-            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRegistered)_.Event).Earbrand == key));
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRegistered) _.Event).Earbrand == key));
         }
     }
 }
