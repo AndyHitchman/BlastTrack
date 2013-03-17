@@ -4,8 +4,8 @@ namespace Honeycomb.Azure
     using Infrastructure;
 
     /// <summary>
-    /// This exists to encourage Json.NET to use the correct constructor without having to annotate <see cref="RaisedEvent"/> with
-    /// provider specific behaviour.
+    ///   This exists to encourage Json.NET to use the correct constructor without having to annotate <see cref="RaisedEvent" /> with
+    ///   provider specific behaviour.
     /// </summary>
     public class SerialisableRaisedEvent : RaisedEvent
     {

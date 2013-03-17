@@ -10,10 +10,10 @@
         public static void StartStorage()
         {
             var start = new ProcessStartInfo
-                {
-                    Arguments = "/devstore:start",
-                    FileName = Path.Combine(AzureEmulatorPath, "csrun.exe")
-                };
+                            {
+                                Arguments = "/devstore:start",
+                                FileName = Path.Combine(AzureEmulatorPath, "csrun.exe")
+                            };
 
             var proc = new Process {StartInfo = start};
             proc.Start();

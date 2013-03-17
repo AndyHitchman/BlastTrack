@@ -25,19 +25,19 @@ namespace Honeycomb.Infrastructure
         public Exception ConsumptionException { get; private set; }
 
         /// <summary>
-        ///  Record an exception for an aggregate's consumption
+        ///   Record an exception for an aggregate's consumption
         /// </summary>
-        /// <param name="aggregateInfo"></param>
-        /// <param name="exception"></param>
+        /// <param name="aggregateInfo"> </param>
+        /// <param name="exception"> </param>
         public void RecordExceptionForConsumer(Exception exception)
         {
             ConsumptionException = exception;
         }
 
         /// <summary>
-        ///  Record completion of an aggregate's consumption
+        ///   Record completion of an aggregate's consumption
         /// </summary>
-        /// <param name="aggregateInfo"></param>
+        /// <param name="aggregateInfo"> </param>
         public void RecordConsumptionComplete()
         {
             ExecutionTime = DateTimeOffset.UtcNow.Subtract(ConsumedTimestamp);

@@ -1,11 +1,9 @@
 ﻿namespace Honeycomb.Azure
 {
-    using System;
     using System.IO;
     using Bus.Infrastructure;
     using Infrastructure;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     public static class JsonEvent
     {

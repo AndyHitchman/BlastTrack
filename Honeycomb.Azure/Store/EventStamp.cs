@@ -21,8 +21,8 @@
         public static EventStamp MakeKey(long ticks)
         {
             long partOfMinuteRowKey;
-            long oneMinutePartitionKey = Math.DivRem(ticks, TicksPerSecond * 60, out partOfMinuteRowKey);
-            long milliRowKey = partOfMinuteRowKey / TicksPerMillisecond;
+            var oneMinutePartitionKey = Math.DivRem(ticks, TicksPerSecond*60, out partOfMinuteRowKey);
+            var milliRowKey = partOfMinuteRowKey/TicksPerMillisecond;
             return new EventStamp(oneMinutePartitionKey.ToString(minutePad), milliRowKey.ToString(milliPad));
         }
     }

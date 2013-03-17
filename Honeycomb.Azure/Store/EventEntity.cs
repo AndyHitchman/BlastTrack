@@ -7,7 +7,7 @@
     public class EventEntity : TableEntity
     {
         /// <summary>
-        /// For Storage API.
+        ///   For Storage API.
         /// </summary>
         public EventEntity()
         {
@@ -28,7 +28,7 @@
         public string TransactionId { get; set; }
 
         public DateTimeOffset RaisedTimestamp { get; set; }
-        
+
         public string Event { get; set; }
 
         // ReSharper restore MemberCanBePrivate.Global

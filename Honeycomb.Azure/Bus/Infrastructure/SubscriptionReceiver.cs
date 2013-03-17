@@ -28,18 +28,18 @@ namespace Honeycomb.Azure.Bus.Infrastructure
 
         private void ensureSubscriptionExists(Filter filter)
         {
-            lock(createLock)
+            lock (createLock)
             {
                 var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-                if(nsMgr.SubscriptionExists(topicPath, subscriptionName)) 
+                if (nsMgr.SubscriptionExists(topicPath, subscriptionName))
                     return;
 
                 var definition = new SubscriptionDescription(topicPath, subscriptionName)
-                {
-                    LockDuration = TimeSpan.FromMinutes(5),
-                    EnableDeadLetteringOnFilterEvaluationExceptions = true,
-                    EnableDeadLetteringOnMessageExpiration = true
-                };
+                                     {
+                                         LockDuration = TimeSpan.FromMinutes(5),
+                                         EnableDeadLetteringOnFilterEvaluationExceptions = true,
+                                         EnableDeadLetteringOnMessageExpiration = true
+                                     };
 
                 nsMgr.CreateSubscription(definition, filter);
             }
@@ -64,7 +64,7 @@ namespace Honeycomb.Azure.Bus.Infrastructure
 
         public void Reopen()
         {
-            if(!subscriptionClient.IsClosed)
+            if (!subscriptionClient.IsClosed)
                 subscriptionClient.Close();
 
             createClient();

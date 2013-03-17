@@ -9,7 +9,7 @@
         private const string longPad = "0000000000000000000";
 
         /// <summary>
-        /// For Storage API.
+        ///   For Storage API.
         /// </summary>
         public ConsumptionLogEntity()
         {
@@ -33,7 +33,7 @@
         public DateTimeOffset ConsumedTimestamp { get; set; }
 
         public TimeSpan ExecutionTime { get; set; }
-        
+
         public Exception ConsumptionException { get; set; }
 
         public string Event { get; set; }

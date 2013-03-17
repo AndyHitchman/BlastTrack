@@ -6,7 +6,7 @@ namespace Honeycomb.Infrastructure
     public class RaisedEvent
     {
         /// <summary>
-        /// To support serialisation
+        ///   To support serialisation
         /// </summary>
         public RaisedEvent(Guid thumbprint, Event @event, DateTimeOffset raisedTimestamp, string transactionId)
         {
@@ -26,7 +26,7 @@ namespace Honeycomb.Infrastructure
         }
 
         /// <summary>
-        /// The unique identity of the event.
+        ///   The unique identity of the event.
         /// </summary>
         public Guid Thumbprint { get; private set; }
 

@@ -19,17 +19,17 @@ namespace Honeycomb.Azure.Bus.Infrastructure
 
         private static void ensureQueueExists(string connectionString, string serviceBusQueue)
         {
-            lock(createLock)
+            lock (createLock)
             {
                 var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-                if(nsMgr.QueueExists(serviceBusQueue)) 
+                if (nsMgr.QueueExists(serviceBusQueue))
                     return;
 
                 var definition = new QueueDescription(serviceBusQueue)
-                    {
-                        MaxSizeInMegabytes = 1024,
-                        DefaultMessageTimeToLive = TimeSpan.FromDays(365)
-                    };
+                                     {
+                                         MaxSizeInMegabytes = 1024,
+                                         DefaultMessageTimeToLive = TimeSpan.FromDays(365)
+                                     };
 
                 nsMgr.CreateQueue(definition);
             }
@@ -38,7 +38,7 @@ namespace Honeycomb.Azure.Bus.Infrastructure
         public void Send(BrokeredMessage message)
         {
             Retry.Work(
-                () => queueClient.Send(((InternalBrokeredMessage)message).Real),
+                () => queueClient.Send(((InternalBrokeredMessage) message).Real),
                 e => e is CommunicationObjectFaultedException |
                      e is CommunicationObjectAbortedException |
                      e is MessagingCommunicationException |

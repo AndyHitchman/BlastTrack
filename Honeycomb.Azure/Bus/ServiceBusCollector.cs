@@ -7,15 +7,15 @@ namespace Honeycomb.Azure.Bus
     using System.Threading.Tasks;
     using Infrastructure;
     using Microsoft.ServiceBus.Messaging;
-    using Honeycomb.Plumbing;
+    using Plumbing;
     using BrokeredMessage = Infrastructure.BrokeredMessage;
 
     public class ServiceBusCollector : EventCollector
     {
         private readonly TimeSpan receiveWaitTime;
         private readonly CancellationTokenSource receiverCancellationTokenSource;
-        private IMessageReceiver receiver;
-        private ManualResetEventSlim stopped;
+        private readonly IMessageReceiver receiver;
+        private readonly ManualResetEventSlim stopped;
 
         public ServiceBusCollector(IMessageReceiver messageReceiver)
         {
@@ -110,6 +110,5 @@ namespace Honeycomb.Azure.Bus
             stopped.Wait();
             onStopped();
         }
-
     }
 }

@@ -1,7 +1,7 @@
 namespace Honeycomb.Azure.Bus.Infrastructure
 {
     /// <summary>
-    /// Expose core message client functions to enable abstraction.
+    ///   Expose core message client functions to enable abstraction.
     /// </summary>
     public interface MessageSender
     {

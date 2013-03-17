@@ -25,7 +25,7 @@ namespace Honeycomb.Azure.Bus.Infrastructure
         }
 
 
-        private  void ensureQueueExists()
+        private void ensureQueueExists()
         {
             lock (createLock)
             {
@@ -34,10 +34,10 @@ namespace Honeycomb.Azure.Bus.Infrastructure
                     return;
 
                 var definition = new QueueDescription(queueName)
-                {
-                    MaxSizeInMegabytes = 1024,
-                    DefaultMessageTimeToLive = TimeSpan.FromDays(365)
-                };
+                                     {
+                                         MaxSizeInMegabytes = 1024,
+                                         DefaultMessageTimeToLive = TimeSpan.FromDays(365)
+                                     };
 
                 nsMgr.CreateQueue(definition);
             }

@@ -8,7 +8,7 @@ namespace Honeycomb.Infrastructure
     {
         private readonly EventEmitter eventEmitter;
         private readonly List<RaisedEvent> changes;
- 
+
         public EventResourceManager(EventEmitter eventEmitter, Transaction transaction)
         {
             this.eventEmitter = eventEmitter;

@@ -1,14 +1,9 @@
 namespace Test.Honeycomb
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Transactions;
     using BlastTrack.Dogs;
     using NSubstitute;
     using NUnit.Framework;
-    using ReflectionMagic;
-    using Should;
     using global::Honeycomb;
     using global::Honeycomb.Infrastructure;
     using global::Honeycomb.Plumbing;

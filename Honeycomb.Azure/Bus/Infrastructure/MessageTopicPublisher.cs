@@ -6,9 +6,9 @@ namespace Honeycomb.Azure.Bus.Infrastructure
     using Microsoft.ServiceBus.Messaging;
 
     /// <summary>
-    /// Domain events are published to a topic.
+    ///   Domain events are published to a topic.
     /// </summary>
-    /// <returns></returns>
+    /// <returns> </returns>
     public class MessageTopicPublisher : MessageSender
     {
         private readonly TopicClient topicClient;
@@ -23,17 +23,17 @@ namespace Honeycomb.Azure.Bus.Infrastructure
 
         private static void ensureTopicExists(string connectionString, string serviceBusTopic)
         {
-            lock(createLock)
+            lock (createLock)
             {
                 var nsMgr = NamespaceManager.CreateFromConnectionString(connectionString);
-                if(nsMgr.TopicExists(serviceBusTopic)) 
+                if (nsMgr.TopicExists(serviceBusTopic))
                     return;
 
                 var definition = new TopicDescription(serviceBusTopic)
-                    {
-                        MaxSizeInMegabytes = 1024,
-                        DefaultMessageTimeToLive = TimeSpan.FromDays(365)
-                    };
+                                     {
+                                         MaxSizeInMegabytes = 1024,
+                                         DefaultMessageTimeToLive = TimeSpan.FromDays(365)
+                                     };
 
                 nsMgr.CreateTopic(definition);
             }
@@ -42,7 +42,7 @@ namespace Honeycomb.Azure.Bus.Infrastructure
         public void Send(BrokeredMessage message)
         {
             Retry.Work(
-                () => topicClient.Send(((InternalBrokeredMessage)message).Real),
+                () => topicClient.Send(((InternalBrokeredMessage) message).Real),
                 e => e is CommunicationObjectFaultedException |
                      e is CommunicationObjectAbortedException |
                      e is MessagingCommunicationException |

@@ -42,6 +42,9 @@ namespace Honeycomb.Azure.Bus.Infrastructure
             return _.GetBody<T>();
         }
 
-        public Microsoft.ServiceBus.Messaging.BrokeredMessage Real { get { return _; } }
+        public Microsoft.ServiceBus.Messaging.BrokeredMessage Real
+        {
+            get { return _; }
+        }
     }
 }

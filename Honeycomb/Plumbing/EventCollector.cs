@@ -5,14 +5,16 @@
     public interface EventCollector
     {
         /// <summary>
-        /// Instructs the collector to begin serving the provided propogation domain.
+        ///   Instructs the collector to begin serving the provided propogation domain.
         /// </summary>
-        /// <param name="propogationDomain"></param>
+        /// <param name="propogationDomain"> </param>
         void StartCollectingEvents(Domain propogationDomain);
 
         /// <summary>
-        /// Instructs the collector to stop collecting events.
-        /// The collector will call <param name="stopped"></param> when has stopped collecting.
+        ///   Instructs the collector to stop collecting events.
+        ///   The collector will call
+        ///   <param name="stopped"> </param>
+        ///   when has stopped collecting.
         /// </summary>
         void StopCollecting(Action stopped);
     }
