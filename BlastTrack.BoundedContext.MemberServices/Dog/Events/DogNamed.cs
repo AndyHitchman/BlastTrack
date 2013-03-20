@@ -1,4 +1,4 @@
-namespace BlastTrack.Dogs
+namespace BlastTrack.BoundedContext.MemberServices.Dog.Events
 {
     public class DogNamed : DogEvent
     {

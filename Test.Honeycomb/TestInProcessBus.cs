@@ -1,7 +1,7 @@
 namespace Test.Honeycomb
 {
     using System;
-    using BlastTrack.Dogs;
+    using BlastTrack.BoundedContext.MemberServices.Dog.Events;
     using NSubstitute;
     using NUnit.Framework;
     using global::Honeycomb;

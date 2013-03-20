@@ -1,6 +1,7 @@
-namespace BlastTrack.Dogs
+namespace BlastTrack.BoundedContext.MemberServices.Dog
 {
     using Commands;
+    using Events;
     using Honeycomb;
 
     public class Dog : Aggregate

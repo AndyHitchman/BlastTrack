@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{546C5E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Honeycomb", "Honeycomb\Honeycomb.csproj", "{72E33E9C-B72C-4630-9903-2E2E8C260015}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlastTrack.Dogs", "BlastTrack.Dogs\BlastTrack.Dogs.csproj", "{18A6C6FB-4DA4-40C4-B39B-3CEE2FE00EE5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.BlastTrack.Dogs", "Test.BlastTrack.Dogs\Test.BlastTrack.Dogs.csproj", "{FBE55A37-C7BC-4A52-B833-90330C8B0C73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Honeycomb", "Test.Honeycomb\Test.Honeycomb.csproj", "{38BA67F2-32F8-423D-82B3-341FB6C90DD2}"
@@ -21,6 +19,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Honeycomb.Azure", "Honeycomb.Azure\Honeycomb.Azure.csproj", "{1AB33F3C-1130-4E0B-84CB-7689DD33062E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Honeycomb.Azure", "Test.Honeycomb.Azure\Test.Honeycomb.Azure.csproj", "{27C9153A-DE30-4BA8-99C7-1FB591628A26}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MemberServices", "MemberServices", "{2CF549DA-BF37-4348-8396-6EC17FA55D0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlastTrack.BoundedContext.MemberServices", "BlastTrack.BoundedContext.MemberServices\BlastTrack.BoundedContext.MemberServices.csproj", "{B05AD5C5-1F96-4217-9C2B-B212E3459377}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +38,6 @@ Global
 		{72E33E9C-B72C-4630-9903-2E2E8C260015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72E33E9C-B72C-4630-9903-2E2E8C260015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72E33E9C-B72C-4630-9903-2E2E8C260015}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18A6C6FB-4DA4-40C4-B39B-3CEE2FE00EE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18A6C6FB-4DA4-40C4-B39B-3CEE2FE00EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18A6C6FB-4DA4-40C4-B39B-3CEE2FE00EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18A6C6FB-4DA4-40C4-B39B-3CEE2FE00EE5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,8 +54,15 @@ Global
 		{27C9153A-DE30-4BA8-99C7-1FB591628A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27C9153A-DE30-4BA8-99C7-1FB591628A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27C9153A-DE30-4BA8-99C7-1FB591628A26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B05AD5C5-1F96-4217-9C2B-B212E3459377} = {2CF549DA-BF37-4348-8396-6EC17FA55D0C}
 	EndGlobalSection
 EndGlobal

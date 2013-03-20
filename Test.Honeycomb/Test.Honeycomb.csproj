@@ -66,9 +66,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BlastTrack.Dogs\BlastTrack.Dogs.csproj">
-      <Project>{18A6C6FB-4DA4-40C4-B39B-3CEE2FE00EE5}</Project>
-      <Name>BlastTrack.Dogs</Name>
+    <ProjectReference Include="..\BlastTrack.BoundedContext.MemberServices\BlastTrack.BoundedContext.MemberServices.csproj">
+      <Project>{B05AD5C5-1F96-4217-9C2B-B212E3459377}</Project>
+      <Name>BlastTrack.BoundedContext.MemberServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\BlastTrack\BlastTrack.csproj">
       <Project>{500F5159-FA15-4F2E-A374-AEA276019D2C}</Project>

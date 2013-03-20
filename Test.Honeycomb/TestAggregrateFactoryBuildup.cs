@@ -1,7 +1,8 @@
 namespace Test.Honeycomb
 {
     using System.Transactions;
-    using BlastTrack.Dogs;
+    using BlastTrack.BoundedContext.MemberServices.Dog;
+    using BlastTrack.BoundedContext.MemberServices.Dog.Events;
     using NUnit.Framework;
     using ReflectionMagic;
     using Should;

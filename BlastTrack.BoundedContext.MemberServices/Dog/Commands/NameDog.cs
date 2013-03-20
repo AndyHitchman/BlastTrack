@@ -1,4 +1,4 @@
-namespace BlastTrack.Dogs.Commands
+namespace BlastTrack.BoundedContext.MemberServices.Dog.Commands
 {
     public class NameDog : DogCommand
     {

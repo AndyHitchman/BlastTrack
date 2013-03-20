@@ -4,8 +4,9 @@ namespace Test.Honeycomb
     using System.Linq;
     using System.Threading;
     using System.Transactions;
-    using BlastTrack.Dogs;
-    using BlastTrack.Dogs.Commands;
+    using BlastTrack.BoundedContext.MemberServices.Dog;
+    using BlastTrack.BoundedContext.MemberServices.Dog.Commands;
+    using BlastTrack.BoundedContext.MemberServices.Dog.Events;
     using NSubstitute;
     using NUnit.Framework;
     using ReflectionMagic;
@@ -21,7 +22,7 @@ namespace Test.Honeycomb
         {
             var eventStore = Substitute.For<EventStore>();
 
-            using (var ts = new TransactionScope())
+            using ( new TransactionScope())
             {
                 var domain = new TestableDomain(null, null, eventStore);
 
@@ -78,9 +79,6 @@ namespace Test.Honeycomb
         [Test]
         public void events_raised_whilst_consuming_events_should_be_emitted()
         {
-            //Ensure assemblies are loaded.
-            DogSelector s;
-
             var waitForConsumption = new ManualResetEventSlim(false);
 
             var eventEmitter = Substitute.For<EventEmitter>();
