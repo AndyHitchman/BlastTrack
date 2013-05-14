@@ -33,21 +33,18 @@
             throw new NotImplementedException();
         }
 
-        public async void RecordEvent(RaisedEvent raisedEvent)
+        public void RecordEvent(RaisedEvent raisedEvent)
         {
             var eventEntity = new EventEntity(raisedEvent);
             var insert = TableOperation.Insert(eventEntity);
-            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(EventStoreTable.BeginExecute, EventStoreTable.EndExecute,
-                                                                               insert, null);
-            await inserted;
+            EventStoreTable.Execute(insert);
         }
 
-        public async void LogConsumption(RaisedEvent raisedEvent, ConsumptionLog consumptionLog)
+        public void LogConsumption(RaisedEvent raisedEvent, ConsumptionLog consumptionLog)
         {
             var logEntity = new ConsumptionLogEntity(consumptionLog, raisedEvent);
             var insert = TableOperation.Insert(logEntity);
-            var inserted = Task.Factory.FromAsync<TableOperation, TableResult>(logTable.BeginExecute, logTable.EndExecute, insert, null);
-            await inserted;
+            logTable.Execute(insert);
         }
     }
 }
