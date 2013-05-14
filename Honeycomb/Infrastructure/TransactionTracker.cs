@@ -8,6 +8,12 @@ namespace Honeycomb.Infrastructure
     {
         private readonly EventEmitter emitter;
 
+        /// <summary>
+        /// A dictionary with a weakly referenced key.
+        /// </summary>
+        /// <remarks>
+        /// See http://stackoverflow.com/questions/10225727/should-conditionalweaktabletkey-tvalue-be-used-for-non-compiler-purposes
+        /// </remarks>
         private readonly ConditionalWeakTable<Transaction, EventResourceManager> resourceManagersForTransactions =
             new ConditionalWeakTable<Transaction, EventResourceManager>();
 
