@@ -73,7 +73,7 @@ namespace Test.Honeycomb
 
             var recorded = domain.TransactionTracker[consumerTransaction].RecordedEvents;
             recorded.Count().ShouldEqual(1);
-            recorded.First().Event.ShouldBeType<DogRequiresVaccinationWithin12Weeks>();
+            recorded.First().Event.ShouldBeType<DogIsNotVaccinated>();
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Test.Honeycomb
 
             waitForConsumption.Wait();
 
-            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogRequiresVaccinationWithin12Weeks) _.Event).Earbrand == key));
+            eventEmitter.Received().Emit(Arg.Is<RaisedEvent>(_ => ((DogIsNotVaccinated) _.Event).Earbrand == key));
         }
 
         [Test]

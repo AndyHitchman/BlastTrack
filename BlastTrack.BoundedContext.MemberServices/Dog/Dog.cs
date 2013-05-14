@@ -21,7 +21,7 @@ namespace BlastTrack.BoundedContext.MemberServices.Dog
         {
             earbrand = @event.Earbrand;
             if (@event.VaccinationCertificateNumber == null)
-                this.Raise(new DogRequiresVaccinationWithin12Weeks(earbrand));
+                this.Raise(new DogIsNotVaccinated(earbrand));
         }
 
         public void Accept(NameDog cmd)

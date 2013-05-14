@@ -2,9 +2,9 @@ namespace BlastTrack.BoundedContext.MemberServices.Dog.Events
 {
     using Honeycomb;
 
-    public class DogRequiresVaccinationWithin12Weeks : Event
+    public class DogIsNotVaccinated : Event
     {
-        public DogRequiresVaccinationWithin12Weeks(string earbrand)
+        public DogIsNotVaccinated(string earbrand)
         {
             Earbrand = earbrand;
         }

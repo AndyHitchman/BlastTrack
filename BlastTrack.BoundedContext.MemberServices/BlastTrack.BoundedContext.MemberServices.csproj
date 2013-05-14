@@ -47,7 +47,7 @@
     <Compile Include="Dog\Events\DogEvent.cs" />
     <Compile Include="Dog\Events\DogNamed.cs" />
     <Compile Include="Dog\Events\DogRegistered.cs" />
-    <Compile Include="Dog\Events\DogRequiresVaccinationWithin12Weeks.cs" />
+    <Compile Include="Dog\Events\DogIsNotVaccinated.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
