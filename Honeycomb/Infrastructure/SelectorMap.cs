@@ -41,11 +41,11 @@ namespace Honeycomb.Infrastructure
                                     {
                                         PossibleSelectorType = possibleSelectorType,
                                         Selectors =
-                                    possibleSelectorType
-                                    .GetInterfaces()
-                                    .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
-                                    .Where(selector => selector != typeof (SelectKeyForAggregate))
-                                    .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
+                                            possibleSelectorType
+                                                .GetInterfaces()
+                                                .Where(iface => typeof (SelectKeyForAggregate).IsAssignableFrom(iface))
+                                                .Where(selector => selector != typeof (SelectKeyForAggregate))
+                                                .Where(selector => selector.GetGenericArguments()[1].IsAssignableFrom(messageType))
                                     })
                             .Where(possibleSelectors => possibleSelectors.Selectors.Any())
                             .SelectMany(

@@ -48,13 +48,11 @@
     <Compile Include="Dog\Events\DogNamed.cs" />
     <Compile Include="Dog\Events\DogRegistered.cs" />
     <Compile Include="Dog\Events\DogIsNotVaccinated.cs" />
+    <Compile Include="Dog\Projections\ViewDogDetails.cs" />
+    <Compile Include="Dog\Projections\UpdateIndex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BlastTrack\BlastTrack.csproj">
-      <Project>{500f5159-fa15-4f2e-a374-aea276019d2c}</Project>
-      <Name>BlastTrack</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Honeycomb\Honeycomb.csproj">
       <Project>{72e33e9c-b72c-4630-9903-2e2e8c260015}</Project>
       <Name>Honeycomb</Name>

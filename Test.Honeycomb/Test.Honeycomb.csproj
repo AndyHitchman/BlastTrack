@@ -70,10 +70,6 @@
       <Project>{B05AD5C5-1F96-4217-9C2B-B212E3459377}</Project>
       <Name>BlastTrack.BoundedContext.MemberServices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BlastTrack\BlastTrack.csproj">
-      <Project>{500F5159-FA15-4F2E-A374-AEA276019D2C}</Project>
-      <Name>BlastTrack</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Honeycomb\Honeycomb.csproj">
       <Project>{72E33E9C-B72C-4630-9903-2E2E8C260015}</Project>
       <Name>Honeycomb</Name>

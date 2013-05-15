@@ -51,10 +51,11 @@
     <Compile Include="Infrastructure\AggregateFactory.cs" />
     <Compile Include="Infrastructure\AggregateInfo.cs" />
     <Compile Include="Infrastructure\AggregateLifestate.cs" />
+    <Compile Include="Infrastructure\SelectorMap.cs" />
     <Compile Include="Infrastructure\EventResourceManager.cs" />
     <Compile Include="Infrastructure\ConsumptionLog.cs" />
     <Compile Include="Infrastructure\TransactionTracker.cs" />
-    <Compile Include="Infrastructure\SelectorMap.cs" />
+    <Compile Include="Infrastructure\ProjectorMap.cs" />
     <Compile Include="Infrastructure\AggregateTracker.cs" />
     <Compile Include="Infrastructure\RaisedEvent.cs" />
     <Compile Include="Message.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Plumbing\EventEmitter.cs" />
     <Compile Include="Plumbing\EventStore.cs" />
     <Compile Include="Plumbing\InProcessEventBus.cs" />
+    <Compile Include="Projector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefusedCommandException.cs" />
     <Compile Include="Domain.cs" />
