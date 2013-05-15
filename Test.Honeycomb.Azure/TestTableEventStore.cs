@@ -47,7 +47,7 @@
         }
 
         [Test]
-        public async void it_should_insert_the_consumption_logs_into_the_store()
+        public void it_should_insert_the_consumption_logs_into_the_store()
         {
             deleteConsumptionLogTable();
 

@@ -48,6 +48,7 @@
                 writer.Flush();
             }
 
+            //We hand ownership of the stream to the brokered message. It is responsible for cleanly disposing of the resource.
             var msg = new BrokeredMessageWrapper(new Microsoft.ServiceBus.Messaging.BrokeredMessage(stream, true));
             msg.Properties[propEventType] = @event.Event.GetType();
             msg.Properties[propTransactionId] = @event.TransactionId;
