@@ -30,7 +30,7 @@ namespace Honeycomb.Infrastructure
                             assembly
                                 .GetTypes()
                                 .Where(type => type.IsClass)
-                                .Where(possibleProjector => typeof (Projector).IsAssignableFrom(possibleProjector))
+                                .Where(possibleProjector => typeof (Project).IsAssignableFrom(possibleProjector))
                                 .ToArray();
                     }
 
@@ -45,8 +45,8 @@ namespace Honeycomb.Infrastructure
                                         Projectors =
                                             possibleProjectorType
                                                 .GetInterfaces()
-                                                .Where(iface => typeof (Projector).IsAssignableFrom(iface))
-                                                .Where(projector => projector != typeof (Projector))
+                                                .Where(iface => typeof (Project).IsAssignableFrom(iface))
+                                                .Where(projector => projector != typeof (Project))
                                                 .Where(projector => projector.GetGenericArguments()[0].IsAssignableFrom(aggregateType))
                                                 .Where(projector => projector.GetGenericArguments()[1].IsAssignableFrom(eventType))
                                     })
@@ -57,7 +57,7 @@ namespace Honeycomb.Infrastructure
                                 new ProjectorInfo(
                                     projector.GetGenericArguments()[0],
                                     projector.GetGenericArguments()[1],
-                                    (Projector) Activator.CreateInstance(possibleProjectors.PossibleProjectorType)))
+                                    (Project) Activator.CreateInstance(possibleProjectors.PossibleProjectorType)))
                             .ToArray();
                 }
 
@@ -67,7 +67,7 @@ namespace Honeycomb.Infrastructure
 
         public class ProjectorInfo
         {
-            public ProjectorInfo(Type aggregateType, Type @eventType, Projector projector)
+            public ProjectorInfo(Type aggregateType, Type @eventType, Project projector)
             {
                 AggregateType = aggregateType;
                 EventType = eventType;
@@ -76,7 +76,7 @@ namespace Honeycomb.Infrastructure
 
             public Type AggregateType { get; private set; }
             public Type EventType { get; private set; }
-            public Projector Projector { get; private set; }
+            public Project Projector { get; private set; }
         }
     }
 }

@@ -1,5 +1,6 @@
 namespace Test.Honeycomb
 {
+    using System;
     using System.Transactions;
     using BlastTrack.BoundedContext.MemberServices.Dog;
     using BlastTrack.BoundedContext.MemberServices.Dog.Events;
@@ -42,6 +43,7 @@ namespace Test.Honeycomb
 
                 var aggregateKey = "test";
                 var givenName = "Wolfie";
+                var assignedDate = new DateTime(2013, 05, 16);
 
                 var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
                 new TestableAggregateFactory().Buildup(
@@ -49,7 +51,7 @@ namespace Test.Honeycomb
                     new Event[]
                         {
                             new DogRegistered(aggregateKey, null),
-                            new DogNamed(aggregateKey, givenName)
+                            new DogNamed(aggregateKey, givenName, assignedDate)
                         });
 
                 ((string) ai.Instance.AsDynamic().name).ShouldEqual(givenName);
@@ -87,6 +89,7 @@ namespace Test.Honeycomb
 
                 var aggregateKey = "test";
                 var givenName = "Wolfie";
+                var assignedDate = new DateTime(2013, 05, 16);
 
                 var ai = domain.AggregateTracker[typeof (Dog), aggregateKey];
                 new TestableAggregateFactory().Buildup(
@@ -94,12 +97,13 @@ namespace Test.Honeycomb
                     new Event[]
                         {
                             new DogRegistered(aggregateKey, null),
-                            new DogNamed(aggregateKey, givenName)
+                            new DogNamed(aggregateKey, givenName, assignedDate)
                         });
 
                 ai.Lifestate.ShouldEqual(AggregateLifestate.Live);
                 ((string) ai.Instance.AsDynamic().earbrand).ShouldEqual(aggregateKey);
                 ((string) ai.Instance.AsDynamic().name).ShouldEqual(givenName);
+                ((DateTime) ai.Instance.AsDynamic().nameAssignedDate).ShouldEqual(assignedDate);
             }
         }
     }

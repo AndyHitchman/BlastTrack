@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MemberServices", "MemberSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlastTrack.BoundedContext.MemberServices", "BlastTrack.BoundedContext.MemberServices\BlastTrack.BoundedContext.MemberServices.csproj", "{B05AD5C5-1F96-4217-9C2B-B212E3459377}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlastTrack.Projections.MemberServices", "BlastTrack.Projections.MemberServices\BlastTrack.Projections.MemberServices.csproj", "{D96EAE29-2DE0-4670-AE2E-616F131EC9B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,11 +54,16 @@ Global
 		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B05AD5C5-1F96-4217-9C2B-B212E3459377}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D96EAE29-2DE0-4670-AE2E-616F131EC9B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D96EAE29-2DE0-4670-AE2E-616F131EC9B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D96EAE29-2DE0-4670-AE2E-616F131EC9B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D96EAE29-2DE0-4670-AE2E-616F131EC9B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B05AD5C5-1F96-4217-9C2B-B212E3459377} = {2CF549DA-BF37-4348-8396-6EC17FA55D0C}
+		{D96EAE29-2DE0-4670-AE2E-616F131EC9B2} = {2CF549DA-BF37-4348-8396-6EC17FA55D0C}
 	EndGlobalSection
 EndGlobal

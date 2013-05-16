@@ -63,7 +63,7 @@
     <Compile Include="Plumbing\EventEmitter.cs" />
     <Compile Include="Plumbing\EventStore.cs" />
     <Compile Include="Plumbing\InProcessEventBus.cs" />
-    <Compile Include="Projector.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefusedCommandException.cs" />
     <Compile Include="Domain.cs" />

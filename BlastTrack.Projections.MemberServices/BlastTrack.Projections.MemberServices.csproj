@@ -4,13 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B05AD5C5-1F96-4217-9C2B-B212E3459377}</ProjectGuid>
+    <ProjectGuid>{D96EAE29-2DE0-4670-AE2E-616F131EC9B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlastTrack.BoundedContext.MemberServices</RootNamespace>
-    <AssemblyName>BlastTrack.BoundedContext.MemberServices</AssemblyName>
+    <RootNamespace>BlastTrack.Projections.MemberServices</RootNamespace>
+    <AssemblyName>BlastTrack.Projections.MemberServices</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -39,25 +44,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dog\Commands\DogCommand.cs" />
-    <Compile Include="Dog\Commands\NameDog.cs" />
-    <Compile Include="Dog\Commands\RegisterDog.cs" />
-    <Compile Include="Dog\Dog.cs" />
-    <Compile Include="Dog\DogSelector.cs" />
-    <Compile Include="Dog\Events\DogEvent.cs" />
-    <Compile Include="Dog\Events\DogNamed.cs" />
-    <Compile Include="Dog\Events\DogRegistered.cs" />
-    <Compile Include="Dog\Events\DogIsNotVaccinated.cs" />
+    <Compile Include="Dog\Details.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlastTrack.BoundedContext.MemberServices\BlastTrack.BoundedContext.MemberServices.csproj">
+      <Project>{B05AD5C5-1F96-4217-9C2B-B212E3459377}</Project>
+      <Name>BlastTrack.BoundedContext.MemberServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Honeycomb\Honeycomb.csproj">
-      <Project>{72e33e9c-b72c-4630-9903-2e2e8c260015}</Project>
+      <Project>{72E33E9C-B72C-4630-9903-2E2E8C260015}</Project>
       <Name>Honeycomb</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="MemberServices\Dog\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

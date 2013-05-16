@@ -1,5 +1,6 @@
 namespace BlastTrack.BoundedContext.MemberServices.Dog
 {
+    using System;
     using Commands;
     using Events;
     using Honeycomb;
@@ -8,6 +9,7 @@ namespace BlastTrack.BoundedContext.MemberServices.Dog
     {
         private readonly string earbrand;
         private string name;
+        private DateTime nameAssignedDate;
 
 
         public Dog(RegisterDog cmd)
@@ -28,12 +30,13 @@ namespace BlastTrack.BoundedContext.MemberServices.Dog
         {
             if (name != null) throw new RefusedCommandException("The dog is already named");
 
-            this.Raise(new DogNamed(earbrand, cmd.GivenName));
+            this.Raise(new DogNamed(earbrand, cmd.GivenName, DateTime.Now));
         }
 
         public void Receive(DogNamed @event)
         {
             name = @event.GivenName;
+            nameAssignedDate = @event.AssignedDate;
         }
     }
 }
