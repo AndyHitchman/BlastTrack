@@ -10,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{546C5E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Honeycomb", "Honeycomb\Honeycomb.csproj", "{72E33E9C-B72C-4630-9903-2E2E8C260015}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.BlastTrack.Dogs", "Test.BlastTrack.Dogs\Test.BlastTrack.Dogs.csproj", "{FBE55A37-C7BC-4A52-B833-90330C8B0C73}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Honeycomb", "Test.Honeycomb\Test.Honeycomb.csproj", "{38BA67F2-32F8-423D-82B3-341FB6C90DD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Honeycomb.Azure", "Honeycomb.Azure\Honeycomb.Azure.csproj", "{1AB33F3C-1130-4E0B-84CB-7689DD33062E}"
@@ -34,10 +32,6 @@ Global
 		{72E33E9C-B72C-4630-9903-2E2E8C260015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72E33E9C-B72C-4630-9903-2E2E8C260015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72E33E9C-B72C-4630-9903-2E2E8C260015}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBE55A37-C7BC-4A52-B833-90330C8B0C73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38BA67F2-32F8-423D-82B3-341FB6C90DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{38BA67F2-32F8-423D-82B3-341FB6C90DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38BA67F2-32F8-423D-82B3-341FB6C90DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU

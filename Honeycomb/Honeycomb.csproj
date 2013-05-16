@@ -69,6 +69,7 @@
     <Compile Include="RefusedCommandException.cs" />
     <Compile Include="Domain.cs" />
     <Compile Include="SelectKeyForAggregate.cs" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

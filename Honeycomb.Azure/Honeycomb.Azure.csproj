@@ -80,6 +80,8 @@
     <Compile Include="Bus\Infrastructure\MessageTopicPublisher.cs" />
     <Compile Include="Bus\Infrastructure\QueueReceiver.cs" />
     <Compile Include="Bus\Infrastructure\SubscriptionReceiver.cs" />
+    <Compile Include="Projection\BlobView.cs" />
+    <Compile Include="Projection\BlobViewContainer.cs" />
     <Compile Include="SerialisableRaisedEvent.cs" />
     <Compile Include="Store\ConsumptionLogEntity.cs" />
     <Compile Include="Store\EventEntity.cs" />
