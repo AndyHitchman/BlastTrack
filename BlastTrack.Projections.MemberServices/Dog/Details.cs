@@ -17,27 +17,37 @@
 
         public void Project(DogRegistered @event)
         {
-            var view = new BlobView(blobViewContainer, resourceTemplate.WithParams(@event.Earbrand));
-
             //There is no resource before this event. Create.
-            var dogDetails = new
+            dynamic dogDetails = new
                 {
                     @event.Earbrand,
                     @event.VaccinationCertificateNumber,
                     IsNamed = false
                 };
 
-            view.UpdateContent(JObject.FromObject(dogDetails));
+            view(@event).UpdateContent(dogDetails);
         }
 
         public void Project(DogIsNotVaccinated @event)
         {
-            throw new System.NotImplementedException();
+            var view = this.view(@event);
+            var content = view.GetContent();
+
+            content.IsVaccinated = false;
+            content.VaccinatedRequiredByDate = @event.RequiredVaccinationDate;
         }
 
         public void Project(DogNamed @event)
         {
-            throw new System.NotImplementedException();
+            var view = this.view(@event);
+            var content = view.GetContent();
+
+
+        }
+
+        private BlobView view(DogEvent @event)
+        {
+            return new BlobView(blobViewContainer, resourceTemplate.WithParams(@event.Earbrand));
         }
     }
 }

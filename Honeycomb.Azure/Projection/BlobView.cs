@@ -13,35 +13,40 @@
         public BlobView(BlobViewContainer container, string relativePath)
         {
             blob = container.GetBlockBlobReference(relativePath);
+            blob.Properties.ContentType = "application/json";
         }
 
-        public JObject GetContent()
+        public dynamic GetContent()
         {
             if (!blob.Exists())
                 return new JObject();
 
-            using (var s = new PreservedMemoryStream())
+            var s = new PreservedMemoryStream();
+            blob.DownloadToStream(s);
+
             using (var sr = new StreamReader(s))
             using (var jr = new JsonTextReader(sr))
             {
-                blob.DownloadToStream(s);
-                return (JObject) JToken.ReadFrom(jr);
+                return JToken.ReadFrom(jr);
             }
         }
 
-        public void UpdateContent(JObject obj)
+        public void UpdateContent(dynamic obj)
         {
             var accessCondition = string.IsNullOrEmpty(blob.Properties.ETag)
                 ? AccessCondition.GenerateEmptyCondition()
                 : AccessCondition.GenerateIfMatchCondition(blob.Properties.ETag);
 
-            using (var s = new PreservedMemoryStream())
+            var s = new PreservedMemoryStream();
+
             using (var sw = new StreamWriter(s))
             using (var jw = new JsonTextWriter(sw))
             {
-                obj.WriteTo(jw);
-                blob.UploadFromStream(s, accessCondition);
+                JObject jo = JObject.FromObject(obj);
+                jo.WriteTo(jw);
             }
+
+            blob.UploadFromStream(s, accessCondition);
         }
     }
 }

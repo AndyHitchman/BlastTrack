@@ -1,14 +1,15 @@
 namespace BlastTrack.BoundedContext.MemberServices.Dog.Events
 {
+    using System;
     using Honeycomb;
 
-    public class DogIsNotVaccinated : Event
+    public class DogIsNotVaccinated : DogEvent
     {
-        public DogIsNotVaccinated(string earbrand)
+        public DogIsNotVaccinated(string earbrand, DateTime requiredVaccinationDate) : base(earbrand)
         {
-            Earbrand = earbrand;
+            RequiredVaccinationDate = requiredVaccinationDate;
         }
 
-        public string Earbrand { get; private set; }
+        public DateTime RequiredVaccinationDate { get; private set; }
     }
 }
