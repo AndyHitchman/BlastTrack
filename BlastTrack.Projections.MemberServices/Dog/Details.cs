@@ -17,7 +17,7 @@
         public void Project(DogRegistered @event)
         {
             //There is no resource before this event. Create.
-            dynamic dogDetails = new
+            var dogDetails = new
                 {
                     @event.Earbrand,
                     @event.VaccinationCertificateNumber,
@@ -41,7 +41,10 @@
             var view = this.view(@event);
             var content = view.GetContent();
 
+            content.Name = @event.GivenName;
+            content.NameAssignedDate = @event.AssignedDate;
 
+            view.UpdateContent(content);
         }
 
         private BlobView view(DogEvent @event)
