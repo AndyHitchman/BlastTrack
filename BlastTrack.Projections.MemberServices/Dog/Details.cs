@@ -3,7 +3,6 @@
     using BoundedContext.MemberServices.Dog.Events;
     using Honeycomb;
     using Honeycomb.Azure.Projection;
-    using Newtonsoft.Json.Linq;
 
     public class Details : Project<DogRegistered>, Project<DogIsNotVaccinated>, Project<DogNamed>
     {
