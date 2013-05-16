@@ -9,18 +9,16 @@ namespace Honeycomb.Infrastructure
     {
         private readonly Dictionary<Assembly, Type[]> projectorsForAssembly = new Dictionary<Assembly, Type[]>();
 
-        private readonly Dictionary<Tuple<Type,Type>, ProjectorInfo[]> projectorsForEvent =
-            new Dictionary<Tuple<Type,Type>, ProjectorInfo[]>();
+        private readonly Dictionary<Type, ProjectorInfo[]> projectorsForEvent =
+            new Dictionary<Type, ProjectorInfo[]>();
 
-        public ProjectorInfo[] this[Aggregate aggregate, Event @event]
+        public ProjectorInfo[] this[Event @event]
         {
             get
             {
-                var aggregateType = aggregate.GetType();
                 var eventType = @event.GetType();
-                var key = Tuple.Create(aggregateType, eventType);
                 
-                if (!projectorsForEvent.ContainsKey(key))
+                if (!projectorsForEvent.ContainsKey(eventType))
                 {
                     foreach (
                         var assembly in
@@ -34,7 +32,7 @@ namespace Honeycomb.Infrastructure
                                 .ToArray();
                     }
 
-                    projectorsForEvent[key] =
+                    projectorsForEvent[eventType] =
                         projectorsForAssembly
                             .SelectMany(_ => _.Value)
                             .Select(
@@ -47,8 +45,7 @@ namespace Honeycomb.Infrastructure
                                                 .GetInterfaces()
                                                 .Where(iface => typeof (Project).IsAssignableFrom(iface))
                                                 .Where(projector => projector != typeof (Project))
-                                                .Where(projector => projector.GetGenericArguments()[0].IsAssignableFrom(aggregateType))
-                                                .Where(projector => projector.GetGenericArguments()[1].IsAssignableFrom(eventType))
+                                                .Where(projector => projector.GetGenericArguments()[0].IsAssignableFrom(eventType))
                                     })
                             .Where(possibleProjectors => possibleProjectors.Projectors.Any())
                             .SelectMany(
@@ -56,25 +53,22 @@ namespace Honeycomb.Infrastructure
                                 (possibleProjectors, projector) =>
                                 new ProjectorInfo(
                                     projector.GetGenericArguments()[0],
-                                    projector.GetGenericArguments()[1],
                                     (Project) Activator.CreateInstance(possibleProjectors.PossibleProjectorType)))
                             .ToArray();
                 }
 
-                return projectorsForEvent[key];
+                return projectorsForEvent[eventType];
             }
         }
 
         public class ProjectorInfo
         {
-            public ProjectorInfo(Type aggregateType, Type @eventType, Project projector)
+            public ProjectorInfo(Type @eventType, Project projector)
             {
-                AggregateType = aggregateType;
                 EventType = eventType;
                 Projector = projector;
             }
 
-            public Type AggregateType { get; private set; }
             public Type EventType { get; private set; }
             public Project Projector { get; private set; }
         }

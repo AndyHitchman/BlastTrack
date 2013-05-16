@@ -5,7 +5,7 @@
     using Honeycomb.Azure.Projection;
     using Newtonsoft.Json.Linq;
 
-    public class Details : Project<DogRegistered>
+    public class Details : Project<DogRegistered>, Project<DogIsNotVaccinated>, Project<DogNamed>
     {
         private const string resourceTemplate = "dog/details/{0}";
         private readonly BlobViewContainer blobViewContainer;
@@ -28,6 +28,16 @@
                 };
 
             view.UpdateContent(JObject.FromObject(dogDetails));
+        }
+
+        public void Project(DogIsNotVaccinated @event)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Project(DogNamed @event)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
